@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "mistral-ai-718x512.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

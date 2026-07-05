@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "Microsoft_Logo_512px.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
