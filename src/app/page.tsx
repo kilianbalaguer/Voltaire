@@ -41,6 +41,8 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <main>
       {/* Navbar */}
@@ -58,9 +60,21 @@ export default function Home() {
               <li><a href="#contact">Contact</a></li>
             </ul>
             <a href="#download" className="nav-cta">Download</a>
+            <button className="nav-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+              <i className={`fa-solid ${mobileMenuOpen ? "fa-xmark" : "fa-bars"}`}></i>
+            </button>
           </div>
         </div>
       </nav>
+      {mobileMenuOpen && (
+        <div className="mobile-menu">
+          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
+          <a href="#models" onClick={() => setMobileMenuOpen(false)}>Models</a>
+          <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+          <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+          <a href="#download" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>Download</a>
+        </div>
+      )}
 
       {/* Hero */}
       <section className="hero">
@@ -79,7 +93,7 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-image">
-            <Image src="/images/voltaire-screenshot.png" alt="Voltaire on iPhone" width={400} height={866} style={{ width: 400, height: "auto" }} />
+            <Image src="/images/voltaire-screenshot.png" alt="Voltaire on iPhone" width={400} height={866} style={{ width: "100%", maxWidth: 400, height: "auto" }} />
           </div>
         </div>
       </section>

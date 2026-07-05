@@ -55,7 +55,7 @@ a:hover {
 	left: 0;
 	right: 0;
 	padding: 16px 0;
-	z-index: 100;
+	z-index: 1000;
 	transition: background 0.3s, backdrop-filter 0.3s;
 }
 
@@ -115,6 +115,58 @@ a:hover {
 .nav-cta:hover {
 	opacity: 0.85;
 	color: var(--bg);
+}
+
+.nav-hamburger {
+	display: none;
+	background: none;
+	border: none;
+	color: var(--text);
+	font-size: 20px;
+	cursor: pointer;
+	padding: 8px;
+}
+
+.mobile-menu {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	top: 68px;
+	left: 0;
+	right: 0;
+	background: rgba(9, 9, 11, 0.98);
+	backdrop-filter: blur(20px);
+	padding: 20px 24px 24px;
+	border-bottom: 1px solid var(--border);
+	z-index: 1001;
+}
+
+.mobile-menu a {
+	color: var(--text-muted);
+	font-size: 15px;
+	font-weight: 500;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border);
+	transition: color 0.2s;
+}
+
+.mobile-menu a:last-child {
+	border-bottom: none;
+}
+
+.mobile-menu a:hover {
+	color: var(--text);
+}
+
+.mobile-menu-cta {
+	background: var(--text) !important;
+	color: var(--bg) !important;
+	text-align: center;
+	border-radius: 10px !important;
+	margin-top: 8px;
+	padding: 12px !important;
+	border-bottom: none !important;
+	font-weight: 600 !important;
 }
 
 /* Hero */
@@ -721,6 +773,22 @@ a:hover {
 
 /* Responsive */
 @media (max-width: 992px) {
+	.hero .container {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+
+	.hero-text {
+		padding-top: 40px;
+		text-align: center;
+	}
+
+	.hero-image {
+		padding-top: 0;
+		display: flex;
+		justify-content: center;
+	}
+
 	.features-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
@@ -737,9 +805,18 @@ a:hover {
 	.apple-silicon-inner {
 		grid-template-columns: 1fr;
 		gap: 40px;
+		text-align: center;
+	}
+
+	.apple-silicon-content {
+		text-align: left;
 	}
 
 	.faq-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.contact-row {
 		grid-template-columns: 1fr;
 	}
 }
@@ -749,11 +826,43 @@ a:hover {
 		display: none;
 	}
 
-	.hero {
-		padding: 120px 0 60px;
+	.nav-cta {
+		display: none;
 	}
 
-	.features-grid,
+	.nav-hamburger {
+		display: block;
+	}
+
+	.mobile-menu {
+		display: flex;
+	}
+
+	.hero {
+		padding: 80px 0 20px;
+	}
+
+	.hero .container {
+		gap: 24px;
+	}
+
+	.hero h1 {
+		font-size: 28px;
+	}
+
+	.hero p {
+		font-size: 14px;
+		margin: 0 0 24px;
+	}
+
+	.hero-image img {
+		max-width: 200px !important;
+	}
+
+	.features-grid {
+		grid-template-columns: 1fr;
+	}
+
 	.models-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
@@ -767,15 +876,68 @@ a:hover {
 		font-size: 36px;
 	}
 
+	.section-header {
+		margin-bottom: 40px;
+	}
+
+	.section-header h2 {
+		font-size: 28px;
+	}
+
 	.footer-inner {
 		flex-direction: column;
 		gap: 16px;
 	}
+
+	.contact-row {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (max-width: 480px) {
+	.hero h1 {
+		font-size: 24px;
+	}
+
+	.hero p {
+		font-size: 13px;
+	}
+
+	.hero-image img {
+		max-width: 160px !important;
+	}
+
 	.features-grid,
 	.models-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.stats-grid {
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+	}
+
+	.stat h3 {
+		font-size: 28px;
+	}
+
+	.section-header h2 {
+		font-size: 22px;
+	}
+
+	.cta-section h2 {
+		font-size: 28px;
+	}
+
+	.apple-silicon-content h2 {
+		font-size: 24px;
+	}
+
+	.legal-page {
+		padding: 100px 0 60px;
+	}
+
+	.legal-page h1 {
+		font-size: 28px;
 	}
 }
