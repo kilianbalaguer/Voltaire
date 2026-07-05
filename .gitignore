@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+Voltaire.xcodeproj/xcuserdata/kilianbalaguer.xcuserdatad/xcschemes/xcschememanagement.plist
+Voltaire.xcodeproj/project.xcworkspace/xcuserdata/kilianbalaguer.xcuserdatad/UserInterfaceState.xcuserstate
+Voltaire.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+Voltaire.xcodeproj/project.xcworkspace/contents.xcworkspacedata
