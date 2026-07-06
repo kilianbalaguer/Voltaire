@@ -43,3 +43,5 @@ Voltaire.xcodeproj/xcuserdata/kilianbalaguer.xcuserdatad/xcschemes/xcschememanag
 Voltaire.xcodeproj/project.xcworkspace/xcuserdata/kilianbalaguer.xcuserdatad/UserInterfaceState.xcuserstate
 Voltaire.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 Voltaire.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+Voltaire/BuildNumber.xcconfig
+Voltaire.xcodeproj/project.pbxproj
