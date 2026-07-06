@@ -165,12 +165,29 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Models Showcase */}
+      <section className="models-showcase">
+        <div className="container">
+          <div className="models-showcase-inner">
+            <div className="models-showcase-content">
+              <h2>All your models in your hand.</h2>
+              <p>
+                Browse, download, and switch between models effortlessly. From powerful reasoning to creative writing, pick the right model for every task—all running locally on your device.
+              </p>
+            </div>
+            <div className="models-showcase-image">
+              <Image src="/images/voltaire-screenshot-models.png" alt="Voltaire model list" width={400} height={866} style={{ width: "100%", maxWidth: 400, height: "auto" }} />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Apple Silicon MLX - KEPT */}
       <section className="apple-silicon">
         <div className="container">
           <div className="apple-silicon-inner">
             <div className="apple-silicon-image">
-              <Image src="/images/a18_chip.jpg" alt="Apple A18 Chip" width={500} height={500} style={{ maxWidth: 400, width: "100%", height: "auto" }} />
+              <Image src="/images/A19-Pro-Chip.jpg" alt="Apple A19 Pro Chip" width={800} height={800} style={{ maxWidth: 600, width: "100%", height: "auto" }} />
             </div>
             <div className="apple-silicon-content">
               <h2>Optimized for Apple Silicon. Powered by MLX.</h2>

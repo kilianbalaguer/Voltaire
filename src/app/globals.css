@@ -471,6 +471,43 @@ a:hover {
 	font-weight: 500;
 }
 
+/* Models Showcase */
+.models-showcase {
+	padding: 100px 0;
+	background: var(--bg);
+}
+
+.models-showcase-inner {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 60px;
+	align-items: center;
+}
+
+.models-showcase-content h2 {
+	font-size: clamp(28px, 3.5vw, 40px);
+	font-weight: 700;
+	margin-bottom: 20px;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+.models-showcase-content p {
+	font-size: 16px;
+	color: var(--text-muted);
+	line-height: 1.7;
+}
+
+.models-showcase-image {
+	text-align: center;
+}
+
+.models-showcase-image img {
+	border-radius: 20px;
+	max-width: 100%;
+	height: auto;
+}
+
 /* Testimonial / Quote */
 .quote-section {
 	padding: 100px 0;
@@ -809,6 +846,16 @@ a:hover {
 	}
 
 	.apple-silicon-content {
+		text-align: left;
+	}
+
+	.models-showcase-inner {
+		grid-template-columns: 1fr;
+		gap: 40px;
+		text-align: center;
+	}
+
+	.models-showcase-content {
 		text-align: left;
 	}
 
