@@ -30,3 +30,8 @@ fastlane/test_output
 # Environment files
 .env
 GoogleService-Info.plist
+
+# Node.js
+node_modules/
+.next/
+next-env.d.ts

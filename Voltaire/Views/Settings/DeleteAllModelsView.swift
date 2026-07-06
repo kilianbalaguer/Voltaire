@@ -1,6 +1,6 @@
 import SwiftUI
-import SlideButton
 import MLXLMCommon
+import Shimmer
 
 struct DeleteAllModelsView: View {
     @EnvironmentObject var appManager: AppManager
@@ -177,19 +177,29 @@ struct DeleteAllModelsView: View {
                     SlideButton(styling: slideButtonStyling, action: {
                         await performDelete()
                     }, label: {
-                        Text("Swipe to delete")
+                        if countdown <= 0 {
+                            Text("Swipe to delete")
+                                .shimmering()
+                                .padding(.leading, 20)
+                        } else {
+                            Text("Swipe to delete")
+                                .padding(.leading, 20)
+                        }
                     })
                     .disabled(countdown > 0)
 
-                    if countdown > 0 {
-                        HStack(spacing: 6) {
+                    HStack(spacing: 6) {
+                        if countdown > 0 {
                             Image(systemName: "lock.fill")
                                 .font(.caption)
                             Text("Available in \(Int(countdown))s")
                         }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                     }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(height: 16)
+                    .opacity(countdown > 0 ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: countdown > 0)
                 }
                 .padding(.horizontal, 24)
             }
@@ -207,12 +217,12 @@ struct DeleteAllModelsView: View {
             indicatorSpacing: 5,
             indicatorColor: .red,
             backgroundColor: .red.opacity(0.3),
-            textColor: .white,
+            textColor: .primary,
             indicatorSystemName: "trash",
-            indicatorDisabledSystemName: "xmark",
-            textAlignment: .center,
+            indicatorDisabledSystemName: "lock",
+            textAlignment: .globalCenter,
             textFadesOpacity: true,
-            textHiddenBehindIndicator: true,
+            textHiddenBehindIndicator: false,
             textShimmers: false
         )
     }

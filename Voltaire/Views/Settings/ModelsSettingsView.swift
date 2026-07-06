@@ -850,6 +850,12 @@ struct ModelRowView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
             
+            if let size = model.modelSize {
+                Text("\(NSDecimalNumber(decimal: size).doubleValue, specifier: "%.1f") GB")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
             let tags = getModelTags(model)
             if !tags.isEmpty {
                 FlowLayout(spacing: 6) {
