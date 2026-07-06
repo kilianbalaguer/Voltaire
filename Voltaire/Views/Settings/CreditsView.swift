@@ -104,8 +104,6 @@ struct CreditsView: View {
                     .badge("MIT")
                 Link("SwiftUI Shimmer", destination: URL(string: "https://github.com/markiv/SwiftUI-Shimmer")!)
                     .badge("MIT")
-                Link("SlideButton", destination: URL(string: "https://github.com/no-comment/SlideButton")!)
-                    .badge("MIT")
             }
 
             Section("Acknowledgements") {

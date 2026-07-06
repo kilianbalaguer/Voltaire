@@ -1,7 +1,7 @@
 import SwiftUI
-import SlideButton
 import MLXLMCommon
 import SwiftData
+import Shimmer
 
 struct ResetAppView: View {
     @EnvironmentObject var appManager: AppManager
@@ -163,19 +163,29 @@ struct ResetAppView: View {
                     SlideButton(styling: slideButtonStyling, action: {
                         await performReset()
                     }, label: {
-                        Text("Swipe to reset")
+                        if countdown <= 0 {
+                            Text("Swipe to reset")
+                                .shimmering()
+                                .padding(.leading, 20)
+                        } else {
+                            Text("Swipe to reset")
+                                .padding(.leading, 20)
+                        }
                     })
                     .disabled(countdown > 0)
 
-                    if countdown > 0 {
-                        HStack(spacing: 6) {
+                    HStack(spacing: 6) {
+                        if countdown > 0 {
                             Image(systemName: "lock.fill")
                                 .font(.caption)
                             Text("Available in \(Int(countdown))s")
                         }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                     }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(height: 16)
+                    .opacity(countdown > 0 ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: countdown > 0)
                 }
                 .padding(.horizontal, 24)
             }
@@ -193,10 +203,10 @@ struct ResetAppView: View {
             indicatorSpacing: 5,
             indicatorColor: .red,
             backgroundColor: .red.opacity(0.3),
-            textColor: .white,
+            textColor: .primary,
             indicatorSystemName: "arrow.counterclockwise",
-            indicatorDisabledSystemName: "xmark",
-            textAlignment: .center,
+            indicatorDisabledSystemName: "lock",
+            textAlignment: .globalCenter,
             textFadesOpacity: true,
             textHiddenBehindIndicator: true,
             textShimmers: false

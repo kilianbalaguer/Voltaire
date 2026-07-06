@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0248F4262FF98EB80071F1C3 /* SlideButton in Frameworks */ = {isa = PBXBuildFile; productRef = 0248F4252FF98EB80071F1C3 /* SlideButton */; };
 		02C3CFAB2FBF644F00FE62A1 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 02C3CFAA2FBF644F00FE62A1 /* Shimmer */; };
 		D6E794732D4AD0E80036D447 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = D6E794722D4AD0E80036D447 /* MLXLLM */; };
 		D6E794752D4AD0E80036D447 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = D6E794742D4AD0E80036D447 /* MLXLMCommon */; };
@@ -34,7 +33,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0248F4262FF98EB80071F1C3 /* SlideButton in Frameworks */,
 				D6E794772D4AD0E80036D447 /* MLXMNIST in Frameworks */,
 				D6E794752D4AD0E80036D447 /* MLXLMCommon in Frameworks */,
 				D6E794792D4AD0E80036D447 /* MLXVLM in Frameworks */,
@@ -99,7 +97,6 @@
 				D6E794842D4ADA1E0036D447 /* MarkdownUI */,
 				D6FF377A2D4AF6E40071A25C /* LaTeXSwiftUI */,
 				02C3CFAA2FBF644F00FE62A1 /* Shimmer */,
-				0248F4252FF98EB80071F1C3 /* SlideButton */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* Voltaire.app */;
@@ -134,7 +131,6 @@
 				D6E794832D4ADA1E0036D447 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				D6FF37792D4AF6E40071A25C /* XCRemoteSwiftPackageReference "LaTeXSwiftUI" */,
 				02C3CFA92FBF644F00FE62A1 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
-				0248F4242FF98EB80071F1C3 /* XCRemoteSwiftPackageReference "SlideButton" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -169,6 +165,8 @@
 /* Begin XCBuildConfiguration section */
 		860E9CDD2CB055B100C5BB52 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 860E9CD02CB055B000C5BB52 /* Voltaire */;
+			baseConfigurationReferenceRelativePath = BuildNumber.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -231,6 +229,8 @@
 		};
 		860E9CDE2CB055B100C5BB52 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 860E9CD02CB055B000C5BB52 /* Voltaire */;
+			baseConfigurationReferenceRelativePath = BuildNumber.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -290,7 +290,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Voltaire/Voltaire.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "05-07-2026";
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Voltaire/Preview Content\"";
 				DEVELOPMENT_TEAM = 28V442433A;
@@ -337,7 +337,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Voltaire/Voltaire.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "05-07-2026";
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Voltaire/Preview Content\"";
 				DEVELOPMENT_TEAM = 28V442433A;
@@ -401,14 +401,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0248F4242FF98EB80071F1C3 /* XCRemoteSwiftPackageReference "SlideButton" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/no-comment/SlideButton";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		02C3CFA92FBF644F00FE62A1 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer";
@@ -444,11 +436,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0248F4252FF98EB80071F1C3 /* SlideButton */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0248F4242FF98EB80071F1C3 /* XCRemoteSwiftPackageReference "SlideButton" */;
-			productName = SlideButton;
-		};
 		02C3CFAA2FBF644F00FE62A1 /* Shimmer */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 02C3CFA92FBF644F00FE62A1 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;

@@ -131,21 +131,21 @@ struct ChatView: View {
                 } label: {
                     Label("Attach File", systemImage: "doc")
                 }
-                .disabled(true)
+                .disabled(false)
                 
                 Button {
                     showFeatureWarning = true
                 } label: {
                     Label("Take Photo", systemImage: "camera")
                 }
-                .disabled(true)
+                .disabled(false)
                 
                 Button {
                     showFeatureWarning = true
                 } label: {
                     Label("Attach Photo", systemImage: "photo")
                 }
-                .disabled(true)
+                .disabled(false)
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 20, weight: .semibold))
@@ -232,7 +232,14 @@ struct ChatView: View {
                             }
                         } label: {
                             Label {
-                                Text(appManager.modelDisplayName(modelName))
+                                HStack(spacing: 4) {
+                                    Text(appManager.modelDisplayName(modelName))
+                                    if let params = appManager.modelParameterCount(modelName) {
+                                        Text(params)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
                             } icon: {
                                 Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
                             }
@@ -247,12 +254,17 @@ struct ChatView: View {
                 }
             }, label: {
             if appManager.userInterfaceIdiom == .phone {
-                HStack {
+                HStack(spacing: 4) {
                     Text(ModelConfiguration.getModelByName(appManager.currentModelName ?? "")?.familyName ?? chatTitle)
                         .font(.headline)
-                    Image(systemName: "chevron.down")
+                    if let params = appManager.modelParameterCount(appManager.currentModelName ?? "") {
+                        Text(params)
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                    Image(systemName: "chevron.right")
                         .foregroundStyle(.secondary)
-                        .font(.callout.weight(.medium))
+                        .font(.caption2)
                 }
             } else {
                 Image(systemName: "brain")
