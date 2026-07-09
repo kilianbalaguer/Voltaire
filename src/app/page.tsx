@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import AnimatedSection from "@/components/AnimatedSection";
+import CountUp from "@/components/CountUp";
+import { fadeUp, slideLeft, slideRight, staggerContainer } from "@/lib/animations";
 
 const models = [
   { name: "Llama", description: "Meta's flagship family", logo: "/images/meta-logo.png", alt: "Meta Llama" },
@@ -79,7 +83,12 @@ export default function Home() {
       {/* Hero */}
       <section className="hero">
         <div className="container">
-          <div className="hero-text">
+          <motion.div
+            className="hero-text"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <h1>
               AI that lives<br />
               <span className="gradient">on your device.</span>
@@ -91,77 +100,104 @@ export default function Home() {
               Get Voltaire
               <i className="fa-solid fa-arrow-right"></i>
             </a>
-          </div>
-          <div className="hero-image">
+          </motion.div>
+          <motion.div
+            className="hero-image"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             <Image src="/images/voltaire-screenshot.png" alt="Voltaire on iPhone" width={400} height={866} style={{ width: "100%", maxWidth: 400, height: "auto" }} />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Features */}
       <section className="features-section" id="features">
         <div className="container">
-          <div className="section-header">
-            <h2>Built for what matters.</h2>
-            <p>Everything you need for a complete on-device AI experience, designed for Apple hardware.</p>
-          </div>
-          <div className="features-grid">
+          <AnimatedSection variants={fadeUp}>
+            <div className="section-header">
+              <h2>Built for what matters.</h2>
+              <p>Everything you need for a complete on-device AI experience, designed for Apple hardware.</p>
+            </div>
+          </AnimatedSection>
+          <motion.div
+            className="features-grid"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+          >
             {features.map((f, i) => (
-              <div key={i} className="feature-card">
-                <div className="feature-icon">
-                  <i className={f.icon}></i>
+              <AnimatedSection key={i} variants={fadeUp}>
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <i className={f.icon}></i>
+                  </div>
+                  <h3 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {f.title}
+                    {"comingSoon" in f && f.comingSoon && <span className="coming-soon-badge">Coming Soon</span>}
+                  </h3>
+                  <p>{f.description}</p>
                 </div>
-                <h3 style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {f.title}
-                  {"comingSoon" in f && f.comingSoon && <span className="coming-soon-badge">Coming Soon</span>}
-                </h3>
-                <p>{f.description}</p>
-              </div>
+              </AnimatedSection>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Stats */}
       <section className="stats-section">
         <div className="container">
-          <div className="stats-grid">
-            <div className="stat">
-              <h3>100%</h3>
-              <p>Offline</p>
+          <AnimatedSection variants={fadeUp}>
+            <div className="stats-grid">
+              <div className="stat">
+                <h3><CountUp target={100} suffix="%" /></h3>
+                <p>Offline</p>
+              </div>
+              <div className="stat">
+                <h3><CountUp target={0} /></h3>
+                <p>Data collected</p>
+              </div>
+              <div className="stat">
+                <h3><CountUp target={40} suffix="+" /></h3>
+                <p>Models available</p>
+              </div>
+              <div className="stat">
+                <h3><CountUp target={3} /></h3>
+                <p>Platforms</p>
+              </div>
             </div>
-            <div className="stat">
-              <h3>0</h3>
-              <p>Data collected</p>
-            </div>
-            <div className="stat">
-              <h3>40+</h3>
-              <p>Models available</p>
-            </div>
-            <div className="stat">
-              <h3>3</h3>
-              <p>Platforms</p>
-            </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* Models */}
       <section className="models-section" id="models">
         <div className="container">
-          <div className="section-header">
-            <h2>Industry-leading models.</h2>
-            <p>Choose from the most popular open-source AI models, all optimized for Apple Silicon.</p>
-          </div>
-          <div className="models-grid">
+          <AnimatedSection variants={fadeUp}>
+            <div className="section-header">
+              <h2>Industry-leading models.</h2>
+              <p>Choose from the most popular open-source AI models, all optimized for Apple Silicon.</p>
+            </div>
+          </AnimatedSection>
+          <motion.div
+            className="models-grid"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+          >
             {models.map((m, i) => (
-              <div key={i} className="model-card">
-                <Image src={m.logo} alt={m.alt} width={56} height={56} style={"white" in m && m.white ? { filter: "invert(1)" } : undefined} />
-                <h4>{m.name}</h4>
-                <p>{m.description}</p>
-              </div>
+              <AnimatedSection key={i} variants={fadeUp}>
+                <div className="model-card">
+                  <Image src={m.logo} alt={m.alt} width={56} height={56} style={"white" in m && m.white ? { filter: "invert(1)" } : undefined} />
+                  <h4>{m.name}</h4>
+                  <p>{m.description}</p>
+                </div>
+              </AnimatedSection>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -169,15 +205,19 @@ export default function Home() {
       <section className="models-showcase">
         <div className="container">
           <div className="models-showcase-inner">
-            <div className="models-showcase-content">
-              <h2>All your models in your hand.</h2>
-              <p>
-                Browse, download, and switch between models effortlessly. From powerful reasoning to creative writing, pick the right model for every task—all running locally on your device.
-              </p>
-            </div>
-            <div className="models-showcase-image">
-              <Image src="/images/voltaire-screenshot-models.png" alt="Voltaire model list" width={400} height={866} style={{ width: "100%", maxWidth: 400, height: "auto" }} />
-            </div>
+            <AnimatedSection variants={slideLeft}>
+              <div className="models-showcase-content">
+                <h2>All your models in your hand.</h2>
+                <p>
+                  Browse, download, and switch between models effortlessly. From powerful reasoning to creative writing, pick the right model for every task—all running locally on your device.
+                </p>
+              </div>
+            </AnimatedSection>
+            <AnimatedSection variants={slideRight}>
+              <div className="models-showcase-image">
+                <Image src="/images/voltaire-screenshot-models.png" alt="Voltaire model list" width={400} height={866} style={{ width: "100%", maxWidth: 400, height: "auto" }} />
+              </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -186,24 +226,28 @@ export default function Home() {
       <section className="apple-silicon">
         <div className="container">
           <div className="apple-silicon-inner">
-            <div className="apple-silicon-image">
-              <Image src="/images/A19-Pro-Chip.jpg" alt="Apple A19 Pro Chip" width={800} height={800} style={{ maxWidth: 600, width: "100%", height: "auto" }} />
-            </div>
-            <div className="apple-silicon-content">
-              <h2>Optimized for Apple Silicon. Powered by MLX.</h2>
-              <p>
-                Voltaire is built to shine on Apple Silicon, taking full advantage of MLX, Apple&apos;s advanced machine learning framework. MLX is designed to harness the incredible speed and efficiency of the unified memory architecture.
-              </p>
-              <p>
-                From loading models to answering questions, Voltaire delivers remarkable performance while using less power. The result is a seamless experience that feels effortless, whether you are creating, learning, or exploring.
-              </p>
-              <p>
-                And with MLX designed to run across every Apple device, Voltaire is always at its best on iPhone, iPad, or Mac.
-              </p>
-              <a href="https://mlx-framework.org" target="_blank" rel="noopener noreferrer">
-                Learn more about MLX <i className="fa-solid fa-arrow-right" style={{ fontSize: 12, marginLeft: 4 }}></i>
-              </a>
-            </div>
+            <AnimatedSection variants={slideLeft}>
+              <div className="apple-silicon-image">
+                <Image src="/images/A19-Pro-Chip.jpg" alt="Apple A19 Pro Chip" width={800} height={800} style={{ maxWidth: 600, width: "100%", height: "auto" }} />
+              </div>
+            </AnimatedSection>
+            <AnimatedSection variants={slideRight}>
+              <div className="apple-silicon-content">
+                <h2>Optimized for Apple Silicon. Powered by MLX.</h2>
+                <p>
+                  Voltaire is built to shine on Apple Silicon, taking full advantage of MLX, Apple&apos;s advanced machine learning framework. MLX is designed to harness the incredible speed and efficiency of the unified memory architecture.
+                </p>
+                <p>
+                  From loading models to answering questions, Voltaire delivers remarkable performance while using less power. The result is a seamless experience that feels effortless, whether you are creating, learning, or exploring.
+                </p>
+                <p>
+                  And with MLX designed to run across every Apple device, Voltaire is always at its best on iPhone, iPad, or Mac.
+                </p>
+                <a href="https://mlx-framework.org" target="_blank" rel="noopener noreferrer">
+                  Learn more about MLX <i className="fa-solid fa-arrow-right" style={{ fontSize: 12, marginLeft: 4 }}></i>
+                </a>
+              </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -211,81 +255,99 @@ export default function Home() {
       {/* Quote */}
       <section className="quote-section">
         <div className="container">
-          <blockquote>
-            &ldquo;<span>The future of AI is private.</span> Run powerful models on your own hardware, with no data ever leaving your device.&rdquo;
-          </blockquote>
+          <AnimatedSection variants={fadeUp}>
+            <blockquote>
+              &ldquo;<span>The future of AI is private.</span> Run powerful models on your own hardware, with no data ever leaving your device.&rdquo;
+            </blockquote>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* FAQ */}
       <section className="faq-section" id="faq">
         <div className="container">
-          <div className="section-header">
-            <h2>Questions answered.</h2>
-          </div>
-          <div className="faq-grid">
+          <AnimatedSection variants={fadeUp}>
+            <div className="section-header">
+              <h2>Questions answered.</h2>
+            </div>
+          </AnimatedSection>
+          <motion.div
+            className="faq-grid"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+          >
             {faqs.map((faq, i) => (
-              <div key={i} className="faq-item">
-                <h4>{faq.question}</h4>
-                <p>{faq.answer}</p>
-              </div>
+              <AnimatedSection key={i} variants={fadeUp}>
+                <div className="faq-item">
+                  <h4>{faq.question}</h4>
+                  <p>{faq.answer}</p>
+                </div>
+              </AnimatedSection>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Contact */}
       <section className="contact-section" id="contact">
         <div className="container">
-          <div className="section-header">
-            <h2>Get in touch.</h2>
-            <p>Have a question, feedback, or just want to say hi? Send us a message.</p>
-          </div>
-          <div className="contact-form">
-            <div className="contact-row">
-              <div className="contact-field">
-                <label>Full Name</label>
-                <input type="text" id="contact-name" placeholder="Your name" />
+          <AnimatedSection variants={fadeUp}>
+            <div className="section-header">
+              <h2>Get in touch.</h2>
+              <p>Have a question, feedback, or just want to say hi? Send us a message.</p>
+            </div>
+          </AnimatedSection>
+          <AnimatedSection variants={fadeUp}>
+            <div className="contact-form">
+              <div className="contact-row">
+                <div className="contact-field">
+                  <label>Full Name</label>
+                  <input type="text" id="contact-name" placeholder="Your name" />
+                </div>
+                <div className="contact-field">
+                  <label>Email</label>
+                  <input type="email" id="contact-email" placeholder="your@email.com" />
+                </div>
               </div>
               <div className="contact-field">
-                <label>Email</label>
-                <input type="email" id="contact-email" placeholder="your@email.com" />
+                <label>Subject</label>
+                <input type="text" id="contact-subject" placeholder="What's this about?" />
               </div>
+              <div className="contact-field">
+                <label>Message</label>
+                <textarea id="contact-message" rows={5} placeholder="Your message..."></textarea>
+              </div>
+              <button className="send-btn" onClick={() => {
+                const name = (document.getElementById("contact-name") as HTMLInputElement)?.value || "";
+                const email = (document.getElementById("contact-email") as HTMLInputElement)?.value || "";
+                const subject = (document.getElementById("contact-subject") as HTMLInputElement)?.value || "";
+                const message = (document.getElementById("contact-message") as HTMLTextAreaElement)?.value || "";
+                window.location.href = `mailto:kilianbalaguer67@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`From: ${name}\nEmail: ${email}\n\n${message}`)}`;
+              }}>
+                Send Message
+                <i className="fa-solid fa-paper-plane"></i>
+              </button>
             </div>
-            <div className="contact-field">
-              <label>Subject</label>
-              <input type="text" id="contact-subject" placeholder="What's this about?" />
-            </div>
-            <div className="contact-field">
-              <label>Message</label>
-              <textarea id="contact-message" rows={5} placeholder="Your message..."></textarea>
-            </div>
-            <button className="send-btn" onClick={() => {
-              const name = (document.getElementById("contact-name") as HTMLInputElement)?.value || "";
-              const email = (document.getElementById("contact-email") as HTMLInputElement)?.value || "";
-              const subject = (document.getElementById("contact-subject") as HTMLInputElement)?.value || "";
-              const message = (document.getElementById("contact-message") as HTMLTextAreaElement)?.value || "";
-              window.location.href = `mailto:kilianbalaguer67@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`From: ${name}\nEmail: ${email}\n\n${message}`)}`;
-            }}>
-              Send Message
-              <i className="fa-solid fa-paper-plane"></i>
-            </button>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* CTA */}
       <section className="cta-section" id="download">
         <div className="container">
-          <h2>Start running AI locally.</h2>
-          <p>Download Voltaire and experience the power of on-device intelligence.</p>
-          <div className="coming-soon-cta">
-            <i className="fa-brands fa-app-store" style={{ fontSize: 28 }}></i>
-            <div>
-              <span className="coming-soon-cta-label">Coming soon to the</span>
-              <span className="coming-soon-cta-store">App Store</span>
+          <AnimatedSection variants={fadeUp}>
+            <h2>Start running AI locally.</h2>
+            <p>Download Voltaire and experience the power of on-device intelligence.</p>
+            <div className="coming-soon-cta">
+              <i className="fa-brands fa-app-store" style={{ fontSize: 28 }}></i>
+              <div>
+                <span className="coming-soon-cta-label">Coming soon to the</span>
+                <span className="coming-soon-cta-store">App Store</span>
+              </div>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
