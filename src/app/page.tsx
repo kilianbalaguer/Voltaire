@@ -272,77 +272,155 @@ export default function Home() {
             </div>
           </AnimatedSection>
           <AnimatedSection variants={fadeUp}>
-            <div className="requirements-content">
-              <div className="requirements-devices">
-                <div className="devices-column">
-                  <h3><i className="fa-solid fa-check"></i> Supported</h3>
-                  <div className="device-list">
-                    <span className="device-tag supported">iPhone 13 mini</span>
-                    <span className="device-tag supported">iPhone 13</span>
-                    <span className="device-tag supported">iPhone 13 Pro</span>
-                    <span className="device-tag supported">iPhone 13 Pro Max</span>
-                    <span className="device-tag supported">iPhone 14</span>
-                    <span className="device-tag supported">iPhone 14 Plus</span>
-                    <span className="device-tag supported">iPhone 14 Pro</span>
-                    <span className="device-tag supported">iPhone 14 Pro Max</span>
-                    <span className="device-tag supported">iPhone 15</span>
-                    <span className="device-tag supported">iPhone 15 Plus</span>
-                    <span className="device-tag supported">iPhone 15 Pro</span>
-                    <span className="device-tag supported">iPhone 15 Pro Max</span>
-                    <span className="device-tag supported">iPhone 16</span>
-                    <span className="device-tag supported">iPhone 16 Plus</span>
-                    <span className="device-tag supported">iPhone 16e</span>
-                    <span className="device-tag supported">iPhone 16 Pro</span>
-                    <span className="device-tag supported">iPhone 16 Pro Max</span>
-                    <span className="device-tag supported">iPhone 17</span>
-                    <span className="device-tag supported">iPhone 17 Air</span>
-                    <span className="device-tag supported">iPhone 17e</span>
-                    <span className="device-tag supported">iPhone 17 Pro</span>
-                    <span className="device-tag supported">iPhone 17 Pro Max</span>
-                  </div>
+            <div className="requirements-devices-grid">
+              {/* iPhone */}
+              <div className="requirements-device-group">
+                <div className="device-group-header">
+                  <i className="fa-solid fa-mobile-screen"></i>
+                  <h3>iPhone</h3>
                 </div>
-                <div className="devices-column">
-                  <h3><i className="fa-solid fa-xmark"></i> Not Supported</h3>
-                  <div className="device-list">
-                    <span className="device-tag unsupported">iPhone X or earlier</span>
-                    <span className="device-tag unsupported">iPhone XS</span>
-                    <span className="device-tag unsupported">iPhone XS Max</span>
-                    <span className="device-tag unsupported">iPhone XR</span>
-                    <span className="device-tag unsupported">iPhone 11</span>
-                    <span className="device-tag unsupported">iPhone 11 Pro</span>
-                    <span className="device-tag unsupported">iPhone 11 Pro Max</span>
-                    <span className="device-tag unsupported">iPhone 12 mini</span>
-                    <span className="device-tag unsupported">iPhone 12</span>
-                    <span className="device-tag unsupported">iPhone 12 Pro</span>
-                    <span className="device-tag unsupported">iPhone 12 Pro Max</span>
-                    <span className="device-tag unsupported">iPhone SE (1st gen)</span>
-                    <span className="device-tag unsupported">iPhone SE (2nd gen)</span>
-                    <span className="device-tag unsupported">iPhone SE (3rd gen)</span>
+                <div className="devices-columns">
+                  <div className="devices-column">
+                    <h4><i className="fa-solid fa-check"></i> Supported</h4>
+                    <div className="device-list">
+                      <span className="device-tag supported">iPhone 13 mini</span>
+                      <span className="device-tag supported">iPhone 13</span>
+                      <span className="device-tag supported">iPhone 13 Pro</span>
+                      <span className="device-tag supported">iPhone 13 Pro Max</span>
+                      <span className="device-tag supported">iPhone 14</span>
+                      <span className="device-tag supported">iPhone 14 Plus</span>
+                      <span className="device-tag supported">iPhone 14 Pro</span>
+                      <span className="device-tag supported">iPhone 14 Pro Max</span>
+                      <span className="device-tag supported">iPhone 15</span>
+                      <span className="device-tag supported">iPhone 15 Plus</span>
+                      <span className="device-tag supported">iPhone 15 Pro</span>
+                      <span className="device-tag supported">iPhone 15 Pro Max</span>
+                      <span className="device-tag supported">iPhone 16</span>
+                      <span className="device-tag supported">iPhone 16 Plus</span>
+                      <span className="device-tag supported">iPhone 16e</span>
+                      <span className="device-tag supported">iPhone 16 Pro</span>
+                      <span className="device-tag supported">iPhone 16 Pro Max</span>
+                      <span className="device-tag supported">iPhone 17</span>
+                      <span className="device-tag supported">iPhone 17 Air</span>
+                      <span className="device-tag supported">iPhone 17e</span>
+                      <span className="device-tag supported">iPhone 17 Pro</span>
+                      <span className="device-tag supported">iPhone 17 Pro Max</span>
+                    </div>
+                  </div>
+                  <div className="devices-column">
+                    <h4><i className="fa-solid fa-xmark"></i> Not Supported</h4>
+                    <div className="device-list">
+                      <span className="device-tag unsupported">iPhone X or earlier</span>
+                      <span className="device-tag unsupported">iPhone XS</span>
+                      <span className="device-tag unsupported">iPhone XS Max</span>
+                      <span className="device-tag unsupported">iPhone XR</span>
+                      <span className="device-tag unsupported">iPhone 11</span>
+                      <span className="device-tag unsupported">iPhone 11 Pro</span>
+                      <span className="device-tag unsupported">iPhone 11 Pro Max</span>
+                      <span className="device-tag unsupported">iPhone 12 mini</span>
+                      <span className="device-tag unsupported">iPhone 12</span>
+                      <span className="device-tag unsupported">iPhone 12 Pro</span>
+                      <span className="device-tag unsupported">iPhone 12 Pro Max</span>
+                      <span className="device-tag unsupported">iPhone SE (1st gen)</span>
+                      <span className="device-tag unsupported">iPhone SE (2nd gen)</span>
+                      <span className="device-tag unsupported">iPhone SE (3rd gen)</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="requirements-specs">
-                <div className="spec-item">
-                  <i className="fa-brands fa-apple"></i>
-                  <div>
-                    <span className="spec-label">OS</span>
-                    <span className="spec-value">iOS 26+</span>
+              {/* iPad */}
+              <div className="requirements-device-group coming-soon">
+                <div className="device-group-header">
+                  <i className="fa-solid fa-tablet-screen-button"></i>
+                  <h3>iPad</h3>
+                  <span className="coming-soon-badge">Coming Soon</span>
+                </div>
+                <div className="devices-columns">
+                  <div className="devices-column">
+                    <h4><i className="fa-solid fa-check"></i> Supported</h4>
+                    <div className="device-list">
+                      <span className="device-tag supported">iPad Pro (M1)</span>
+                      <span className="device-tag supported">iPad Pro (M2)</span>
+                      <span className="device-tag supported">iPad Pro (M4)</span>
+                      <span className="device-tag supported">iPad Air (M1)</span>
+                      <span className="device-tag supported">iPad Air (M2)</span>
+                      <span className="device-tag supported">iPad Air (M3)</span>
+                      <span className="device-tag supported">iPad mini (A17 Pro)</span>
+                    </div>
+                  </div>
+                  <div className="devices-column">
+                    <h4><i className="fa-solid fa-xmark"></i> Not Supported</h4>
+                    <div className="device-list">
+                      <span className="device-tag unsupported">iPad (1st-9th gen)</span>
+                      <span className="device-tag unsupported">iPad (10th gen)</span>
+                      <span className="device-tag unsupported">iPad Pro (pre-M1)</span>
+                      <span className="device-tag unsupported">iPad Air (pre-M1)</span>
+                      <span className="device-tag unsupported">iPad mini (pre-A17)</span>
+                    </div>
                   </div>
                 </div>
-                <div className="spec-item">
-                  <i className="fa-solid fa-hard-drive"></i>
-                  <div>
-                    <span className="spec-label">Storage</span>
-                    <span className="spec-value">700 MB min</span>
+              </div>
+
+              {/* Mac */}
+              <div className="requirements-device-group coming-soon">
+                <div className="device-group-header">
+                  <i className="fa-solid fa-laptop"></i>
+                  <h3>Mac</h3>
+                  <span className="coming-soon-badge">Coming Soon</span>
+                </div>
+                <div className="devices-columns">
+                  <div className="devices-column">
+                    <h4><i className="fa-solid fa-check"></i> Supported</h4>
+                    <div className="device-list">
+                      <span className="device-tag supported">MacBook Air (M1)</span>
+                      <span className="device-tag supported">MacBook Air (M2)</span>
+                      <span className="device-tag supported">MacBook Air (M3)</span>
+                      <span className="device-tag supported">MacBook Pro (M1)</span>
+                      <span className="device-tag supported">MacBook Pro (M2)</span>
+                      <span className="device-tag supported">MacBook Pro (M3)</span>
+                      <span className="device-tag supported">MacBook Pro (M4)</span>
+                      <span className="device-tag supported">iMac (M1)</span>
+                      <span className="device-tag supported">iMac (M3)</span>
+                      <span className="device-tag supported">iMac (M4)</span>
+                      <span className="device-tag supported">Mac mini (M1)</span>
+                      <span className="device-tag supported">Mac mini (M2)</span>
+                      <span className="device-tag supported">Mac mini (M4)</span>
+                      <span className="device-tag supported">Mac Studio (M1)</span>
+                      <span className="device-tag supported">Mac Studio (M2)</span>
+                      <span className="device-tag supported">Mac Pro (M2 Ultra)</span>
+                    </div>
+                  </div>
+                  <div className="devices-column">
+                    <h4><i className="fa-solid fa-xmark"></i> Not Supported</h4>
+                    <div className="device-list">
+                      <span className="device-tag unsupported">All Intel Macs</span>
+                    </div>
                   </div>
                 </div>
-                <div className="spec-item">
-                  <i className="fa-solid fa-wifi"></i>
-                  <div>
-                    <span className="spec-label">Internet</span>
-                    <span className="spec-value">Downloads only</span>
-                  </div>
+              </div>
+            </div>
+
+            <div className="requirements-specs">
+              <div className="spec-item">
+                <i className="fa-brands fa-apple"></i>
+                <div>
+                  <span className="spec-label">OS</span>
+                  <span className="spec-value">iOS 26+ / iPadOS 26+ / macOS 26+</span>
+                </div>
+              </div>
+              <div className="spec-item">
+                <i className="fa-solid fa-hard-drive"></i>
+                <div>
+                  <span className="spec-label">Storage</span>
+                  <span className="spec-value">700 MB min</span>
+                </div>
+              </div>
+              <div className="spec-item">
+                <i className="fa-solid fa-wifi"></i>
+                <div>
+                  <span className="spec-label">Internet</span>
+                  <span className="spec-value">Downloads only</span>
                 </div>
               </div>
             </div>
