@@ -192,17 +192,6 @@ a:hover {
 	padding-top: 90px;
 }
 
-.hero::before {
-	content: '';
-	position: absolute;
-	top: -200px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 800px;
-	height: 800px;
-	background: radial-gradient(circle, rgba(34, 211, 238, 0.12) 0%, rgba(59, 130, 246, 0.08) 40%, transparent 70%);
-	pointer-events: none;
-}
 
 .hero h1 {
 	font-size: clamp(40px, 6vw, 72px);
@@ -282,6 +271,7 @@ a:hover {
 .features-grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: 1fr;
 	gap: 20px;
 }
 
@@ -291,6 +281,7 @@ a:hover {
 	border-radius: var(--radius);
 	padding: 32px;
 	transition: border-color 0.3s, transform 0.3s;
+	height: 100%;
 }
 
 .feature-card:hover {
@@ -537,6 +528,7 @@ a:hover {
 .faq-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	grid-auto-rows: 1fr;
 	gap: 16px;
 }
 
@@ -545,6 +537,7 @@ a:hover {
 	border: 1px solid var(--border);
 	border-radius: var(--radius);
 	padding: 28px;
+	height: 100%;
 }
 
 .faq-item h4 {
@@ -575,22 +568,22 @@ a:hover {
 .contact-form .send-btn {
 	background: var(--text);
 	color: var(--bg);
-	padding: 10px 24px;
-	border-radius: 8px;
-	font-size: 13px;
+	padding: 14px 32px;
+	border-radius: 999px;
+	font-size: 15px;
 	font-weight: 600;
 	border: none;
 	cursor: pointer;
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	transition: opacity 0.2s, transform 0.2s;
+	gap: 8px;
+	transition: transform 0.2s, box-shadow 0.2s;
 	align-self: center;
 }
 
 .contact-form .send-btn:hover {
-	opacity: 0.85;
-	transform: translateY(-1px);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 32px rgba(250, 250, 250, 0.15);
 }
 
 .contact-row {
@@ -643,18 +636,6 @@ a:hover {
 	overflow: hidden;
 }
 
-.cta-section::before {
-	content: '';
-	position: absolute;
-	bottom: -200px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 600px;
-	height: 600px;
-	background: radial-gradient(circle, rgba(34, 211, 238, 0.1) 0%, transparent 70%);
-	pointer-events: none;
-}
-
 .cta-section h2 {
 	font-size: clamp(32px, 4vw, 48px);
 	font-weight: 800;
@@ -672,13 +653,19 @@ a:hover {
 .coming-soon-cta {
 	display: inline-flex;
 	align-items: center;
-	gap: 14px;
-	padding: 14px 28px;
-	border-radius: 14px;
-	background: var(--bg-card);
-	border: 1px solid var(--border);
-	opacity: 0.6;
+	justify-content: center;
+	background: transparent;
+	border: none;
+	outline: none;
+	box-shadow: 0 0 40px rgba(34, 211, 238, 0.2), 0 0 80px rgba(59, 130, 246, 0.12);
+	border-radius: 8px;
+	transition: box-shadow 0.3s, transform 0.3s;
 	cursor: not-allowed;
+}
+
+.coming-soon-cta:hover {
+	box-shadow: 0 0 60px rgba(34, 211, 238, 0.35), 0 0 100px rgba(59, 130, 246, 0.2);
+	transform: translateY(-2px);
 }
 
 .coming-soon-cta-label {

@@ -341,11 +341,7 @@ export default function Home() {
             <h2>Start running AI locally.</h2>
             <p>Download Voltaire and experience the power of on-device intelligence.</p>
             <div className="coming-soon-cta">
-              <i className="fa-brands fa-app-store" style={{ fontSize: 28 }}></i>
-              <div>
-                <span className="coming-soon-cta-label">Coming soon to the</span>
-                <span className="coming-soon-cta-store">App Store</span>
-              </div>
+              <Image src="/images/Coming-Soon-On-The_AppStoreBadge.svg" alt="Coming Soon on the App Store" width={200} height={66} style={{ width: 200, height: "auto" }} />
             </div>
           </AnimatedSection>
         </div>
