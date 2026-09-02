@@ -2,14 +2,71 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Voltaire - Run AI models locally on your iPhone, iPad, and Mac.",
+  title: "Voltaire - Run AI Models Locally on iPhone, iPad & Mac",
   description:
-    "Run DeepSeek, Qwen, Gemma, Llama, and more on your iPhone, iPad, and Mac. Optimized for Apple Silicon. Offline. Private.",
-  keywords: "AI, iPhone, iPad, Mac, local AI, privacy, Apple Silicon, LLM, MLX, DeepSeek, Qwen, Gemma, Llama, offline AI",
+    "Run DeepSeek, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Zero data collection. Complete privacy. Optimized for Apple Silicon with MLX.",
+  keywords: [
+    "AI app",
+    "local AI",
+    "offline AI",
+    "iPhone AI",
+    "iPad AI",
+    "Mac AI",
+    "privacy AI",
+    "Apple Silicon",
+    "MLX",
+    "LLM",
+    "DeepSeek",
+    "Qwen",
+    "Gemma",
+    "Llama",
+    "on-device AI",
+    "private AI",
+    "no cloud AI",
+    "run AI locally",
+  ],
+  authors: [{ name: "Kilian Balaguer" }],
+  creator: "Kilian Balaguer",
+  publisher: "Kilian Balaguer",
+  metadataBase: new URL("https://voltaire.app"),
   openGraph: {
-    title: "Voltaire - Run AI models locally on your iPhone, iPad, and Mac.",
-    description: "Run DeepSeek, Qwen, Gemma, Llama, and more on your iPhone, iPad, and Mac. Optimized for Apple Silicon. Offline. Private.",
+    title: "Voltaire - Run AI Models Locally on iPhone, iPad & Mac",
+    description:
+      "Run DeepSeek, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Zero data collection. Complete privacy.",
     type: "website",
+    locale: "en_US",
+    siteName: "Voltaire",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Voltaire - On-device AI for iPhone, iPad & Mac",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Voltaire - Run AI Models Locally on iPhone, iPad & Mac",
+    description:
+      "Run DeepSeek, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Complete privacy.",
+    images: ["/images/og-image.png"],
+    creator: "@voltaire",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/images/apple-touch-icon.png",
   },
 };
 
@@ -30,6 +87,9 @@ export default function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+        <meta name="theme-color" content="#09090b" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body>{children}</body>
     </html>

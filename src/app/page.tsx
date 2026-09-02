@@ -38,12 +38,20 @@ const faqs = [
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50);
+      setShowScrollTop(window.scrollY > 500);
+    };
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -456,6 +464,15 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Scroll to Top Button */}
+      <button
+        className={`scroll-top-btn ${showScrollTop ? "visible" : ""}`}
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+      >
+        <i className="fa-solid fa-arrow-up"></i>
+      </button>
     </main>
   );
 }
