@@ -60,6 +60,7 @@ export default function Home() {
             <ul className="nav-links">
               <li><a href="#features">Features</a></li>
               <li><a href="#models">Models</a></li>
+              <li><a href="#requirements">Requirements</a></li>
               <li><a href="#faq">FAQ</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
@@ -74,6 +75,7 @@ export default function Home() {
         <div className="mobile-menu">
           <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
           <a href="#models" onClick={() => setMobileMenuOpen(false)}>Models</a>
+          <a href="#requirements" onClick={() => setMobileMenuOpen(false)}>Requirements</a>
           <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
           <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
           <a href="#download" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>Download</a>
@@ -249,6 +251,94 @@ export default function Home() {
               </div>
             </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      {/* System Requirements */}
+      <section className="requirements-section" id="requirements">
+        <div className="container">
+          <AnimatedSection variants={fadeUp}>
+            <div className="section-header">
+              <h2>System requirements.</h2>
+              <p>Check if your device is compatible with Voltaire.</p>
+            </div>
+          </AnimatedSection>
+          <AnimatedSection variants={fadeUp}>
+            <div className="requirements-content">
+              <div className="requirements-devices">
+                <div className="devices-column">
+                  <h3><i className="fa-solid fa-check"></i> Supported</h3>
+                  <div className="device-list">
+                    <span className="device-tag supported">iPhone 13 mini</span>
+                    <span className="device-tag supported">iPhone 13</span>
+                    <span className="device-tag supported">iPhone 13 Pro</span>
+                    <span className="device-tag supported">iPhone 13 Pro Max</span>
+                    <span className="device-tag supported">iPhone 14</span>
+                    <span className="device-tag supported">iPhone 14 Plus</span>
+                    <span className="device-tag supported">iPhone 14 Pro</span>
+                    <span className="device-tag supported">iPhone 14 Pro Max</span>
+                    <span className="device-tag supported">iPhone 15</span>
+                    <span className="device-tag supported">iPhone 15 Plus</span>
+                    <span className="device-tag supported">iPhone 15 Pro</span>
+                    <span className="device-tag supported">iPhone 15 Pro Max</span>
+                    <span className="device-tag supported">iPhone 16</span>
+                    <span className="device-tag supported">iPhone 16 Plus</span>
+                    <span className="device-tag supported">iPhone 16e</span>
+                    <span className="device-tag supported">iPhone 16 Pro</span>
+                    <span className="device-tag supported">iPhone 16 Pro Max</span>
+                    <span className="device-tag supported">iPhone 17</span>
+                    <span className="device-tag supported">iPhone 17 Air</span>
+                    <span className="device-tag supported">iPhone 17e</span>
+                    <span className="device-tag supported">iPhone 17 Pro</span>
+                    <span className="device-tag supported">iPhone 17 Pro Max</span>
+                  </div>
+                </div>
+                <div className="devices-column">
+                  <h3><i className="fa-solid fa-xmark"></i> Not Supported</h3>
+                  <div className="device-list">
+                    <span className="device-tag unsupported">iPhone X or earlier</span>
+                    <span className="device-tag unsupported">iPhone XS</span>
+                    <span className="device-tag unsupported">iPhone XS Max</span>
+                    <span className="device-tag unsupported">iPhone XR</span>
+                    <span className="device-tag unsupported">iPhone 11</span>
+                    <span className="device-tag unsupported">iPhone 11 Pro</span>
+                    <span className="device-tag unsupported">iPhone 11 Pro Max</span>
+                    <span className="device-tag unsupported">iPhone 12 mini</span>
+                    <span className="device-tag unsupported">iPhone 12</span>
+                    <span className="device-tag unsupported">iPhone 12 Pro</span>
+                    <span className="device-tag unsupported">iPhone 12 Pro Max</span>
+                    <span className="device-tag unsupported">iPhone SE (1st gen)</span>
+                    <span className="device-tag unsupported">iPhone SE (2nd gen)</span>
+                    <span className="device-tag unsupported">iPhone SE (3rd gen)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="requirements-specs">
+                <div className="spec-item">
+                  <i className="fa-brands fa-apple"></i>
+                  <div>
+                    <span className="spec-label">OS</span>
+                    <span className="spec-value">iOS 26+</span>
+                  </div>
+                </div>
+                <div className="spec-item">
+                  <i className="fa-solid fa-hard-drive"></i>
+                  <div>
+                    <span className="spec-label">Storage</span>
+                    <span className="spec-value">700 MB min</span>
+                  </div>
+                </div>
+                <div className="spec-item">
+                  <i className="fa-solid fa-wifi"></i>
+                  <div>
+                    <span className="spec-label">Internet</span>
+                    <span className="spec-value">Downloads only</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
