@@ -9,11 +9,11 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appManager: AppManager
-    @Environment(\.dismiss) var dismiss
     @Environment(LLMEvaluator.self) var llm
     @Binding var currentThread: Thread?
+    var onDismiss: (() -> Void)? = nil
     @State private var showResetApp = false
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -31,7 +31,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("About") {
+                Section {
                     NavigationLink(destination: TermsView()) {
                         Label("Terms & Conditions", systemImage: "doc.text")
                     }
@@ -40,12 +40,38 @@ struct SettingsView: View {
                         Label("Privacy Policy", systemImage: "lock")
                     }
 
-                    NavigationLink(destination: CreditsView()) {
+                    NavigationLink(destination: LicenseView()) {
                         Label("Licenses", systemImage: "doc.plaintext")
+                    }
+
+                    Link(destination: URL(string: "https://voltaireai.app")!) {
+                        HStack {
+                            Label("Website", systemImage: "globe")
+                            Spacer()
+                            Text("voltaireai.app")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Link(destination: URL(string: "https://github.com/kilianbalaguer")!) {
+                        HStack {
+                            Label("Maker", systemImage: "person.circle")
+                            Spacer()
+                            Text("Kilian Balaguer")
+                                .foregroundStyle(.secondary)
+                        }
                     }
 
                     Label("Version \(Bundle.main.releaseVersionNumber ?? "0").\(Bundle.main.buildVersionNumber ?? "0")", systemImage: "info.circle")
                         .foregroundStyle(.secondary)
+                } header: {
+                    Text("About")
+                } footer: {
+                    Text("Made in Morocco 🇲🇦")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
                 }
 
                 Section("Danger Zone") {
@@ -61,8 +87,10 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .modifier(CustomNavTitle(title: "Settings"))
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { dismiss() }) {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        onDismiss?()
+                    } label: {
                         Image(systemName: "xmark")
                     }
                 }
@@ -75,7 +103,6 @@ struct SettingsView: View {
                 }
             }
         }
-        .interactiveDismissDisabled(true)
         .tint(appManager.appTintColor.getColor())
     }
 }
