@@ -65,7 +65,7 @@ All models are downloaded from Hugging Face and stored locally on your device.
 
 ## Requirements
 
-- iOS 17.0+
+- iOS 26.0+
 - Apple Silicon device (iPhone 15 Pro or later recommended for larger models)
 
 ## Installation
