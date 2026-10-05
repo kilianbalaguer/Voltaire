@@ -341,6 +341,8 @@ struct ConversationView: View {
                 .scrollTargetLayout()
             }
             .scrollPosition(id: $scrollID, anchor: .bottom)
+            .scrollContentBackground(.hidden)
+            .background(.clear)
             .onChange(of: llm.output) { _, _ in
                 currentMessage.content = llm.output + "█"
                 // auto scroll to bottom

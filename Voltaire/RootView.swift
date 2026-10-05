@@ -8,37 +8,60 @@
 import SwiftData
 import SwiftUI
 
+enum MainContent: Equatable {
+    case chat
+    case settings
+}
+
 struct RootView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(\.modelContext) var modelContext
     @Environment(LLMEvaluator.self) var llm
     @State var showOnboarding = false
-    @State var showSettings = false
-    @State var showChats = false
+    @State var isMenuExpanded = false
     @State var currentThread: Thread?
+    @State var showSettings = false
     @FocusState var isPromptFocused: Bool
-    
 
     var body: some View {
-        Group {
-            if appManager.userInterfaceIdiom == .phone {
-                    ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings, showOnboarding: $showOnboarding)
-                    .onChange(of: showChats) {
-                        if showChats {
-                            isPromptFocused = false
-                        }
-                    }
-            } else {
-                // iPad
-                NavigationSplitView {
-                    ChatsListView(showChats: $showChats, currentThread: $currentThread, isPromptFocused: $isPromptFocused)
-                } detail: {
-                ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings, showOnboarding: $showOnboarding)
+        CustomSideMenu(isEnabled: true, isExpanded: $isMenuExpanded) { progress in
+            SideMenuContentView(
+                currentThread: $currentThread,
+                isMenuExpanded: $isMenuExpanded,
+                isPromptFocused: $isPromptFocused,
+                onSelectSettings: {
+                    showSettings = true
+                },
+                onOpenChat: {
+                    isMenuExpanded = false
                 }
-            }
+            )
+        } content: { progress in
+            ChatView(
+                currentThread: $currentThread,
+                isPromptFocused: $isPromptFocused,
+                showOnboarding: $showOnboarding,
+                isMenuExpanded: isMenuExpanded,
+                menuProgress: progress
+            )
         }
         .environmentObject(appManager)
         .environment(llm)
+        .fullScreenCover(isPresented: $showSettings) {
+            SettingsView(
+                currentThread: $currentThread,
+                onDismiss: {
+                    showSettings = false
+                }
+            )
+            .environmentObject(appManager)
+            .environment(llm)
+        }
+        .onChange(of: isMenuExpanded) { _, expanded in
+            if expanded {
+                isPromptFocused = false
+            }
+        }
         .task {
             if !appManager.hasSeenOnboarding {
                 showOnboarding.toggle()
@@ -48,38 +71,6 @@ struct RootView: View {
                     _ = try? await llm.load(modelName: modelName)
                 }
             }
-        }
-//        .if(appManager.userInterfaceIdiom == .phone) { view in
-//            view
-//                .gesture(
-//                    DragGesture()
-//                        .onChanged { gesture in
-//                            if !showChats && gesture.startLocation.x < 20 && gesture.translation.width > 100 {
-//                                appManager.playHaptic()
-//                                showChats = true
-//                            }
-//                        }
-//                )
-//        }
-        .sheet(isPresented: $showChats) {
-            NavigationStack {
-                ChatsListView(showChats: $showChats, currentThread: $currentThread, isPromptFocused: $isPromptFocused)
-                    .environmentObject(appManager)
-            }
-            .presentationDetents([.large])
-            .presentationDragIndicator(.hidden)
-            .interactiveDismissDisabled(true)
-        }
-        .sheet(isPresented: $showSettings) {
-            SettingsView(currentThread: $currentThread)
-                .environmentObject(appManager)
-                .environment(llm)
-                .presentationDragIndicator(.hidden)
-                .presentationDetents([.large])
-                .interactiveDismissDisabled(true)
-                .if(appManager.userInterfaceIdiom == .phone) { view in
-                    view.presentationDetents([.large])
-                }
         }
         .sheet(isPresented: $showOnboarding, onDismiss: dismissOnboarding) {
             OnboardingView(showOnboarding: $showOnboarding)
@@ -92,7 +83,7 @@ struct RootView: View {
             cleanupOrphanedBlobs()
         }
     }
-    
+
     func dismissOnboarding() {
         isPromptFocused = true
     }

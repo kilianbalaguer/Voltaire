@@ -21,7 +21,7 @@ struct OnboardingView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 64, height: 64)
-                        .foregroundColor(.black)
+                        .adaptiveLogo()
                     
                     VStack(spacing: 4) {
                         Text("Voltaire")

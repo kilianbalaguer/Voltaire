@@ -27,6 +27,7 @@ struct TypingGreetingView: View {
     }
     
     var showCursor: Bool {
+        guard isRunning else { return false }
         switch phase {
         case .typing, .backspacing:
             return true
@@ -36,10 +37,10 @@ struct TypingGreetingView: View {
     }
     
     var body: some View {
-        Text(displayText + (showCursor ? "|" : " "))
+        Text(displayText + (isRunning && showCursor ? "|" : " "))
             .font(.system(size: 34, weight: .regular, design: .monospaced))
-            .foregroundStyle(.black.opacity(0.3))
-            .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
+            .foregroundStyle(.primary.opacity(0.35))
+            .shadow(color: .primary.opacity(0.2), radius: 8, x: 0, y: 4)
             .onAppear {
                 if isActive {
                     isRunning = true

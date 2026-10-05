@@ -26,6 +26,7 @@ struct VoltaireApp: App {
                 .environmentObject(appManager)
                 .environment(llm)
                 .environment(DeviceStat())
+                .background(Color(.systemBackground))
                 .onReceive(NotificationCenter.default.publisher(for: .restartApp)) { _ in
                     appRestartID = UUID()
                 }

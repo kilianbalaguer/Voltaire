@@ -22,6 +22,7 @@ struct DownloadIndicator: View {
                 Circle()
                     .trim(from: 0, to: CGFloat(progress))
                     .stroke(style: .init(lineWidth: 6, lineCap: .round, lineJoin: .round))
+                    .foregroundStyle(.tint)
                     .rotationEffect(.degrees(-90))
                     .frame(width: 58, height: 58)
             }

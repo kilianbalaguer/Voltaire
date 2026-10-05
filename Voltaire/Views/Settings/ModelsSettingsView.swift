@@ -223,6 +223,7 @@ struct ModelFamilyRowView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
+                    .modifier(ConditionalAdaptiveLogo(icon: family.icon))
                 
                 Text(family.name)
                     .font(.headline)
@@ -808,6 +809,7 @@ struct ModelRowView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
+                    .modifier(ConditionalAdaptiveLogo(icon: icon))
                 
                 Text(appManager.modelDisplayName(model.name))
                     .font(.headline)

@@ -18,10 +18,10 @@ struct ChatView: View {
     @State var showModelPicker = false
     @State var prompt = ""
     @FocusState.Binding var isPromptFocused: Bool
-    @Binding var showChats: Bool
-    @Binding var showSettings: Bool
     @Binding var showOnboarding: Bool
-    
+    var isMenuExpanded: Bool = false
+    var menuProgress: CGFloat = 0
+
     @State var thinkingTime: TimeInterval?
     
     @State private var generatingThreadID: UUID?
@@ -33,7 +33,26 @@ struct ChatView: View {
     @AppStorage("launchCount") private var launchCount = 0
     
     public var isPreview = false
-    
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// Contrast text against the glassProminent fill (light button → dark text, dark button → light text)
+    private var newChatForeground: Color {
+        let tint = appManager.appTintColor.getColor()
+        if tint == .primary {
+            return colorScheme == .dark ? .black : .white
+        }
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        guard UIColor(tint).getRed(&r, green: &g, blue: &b, alpha: &a) else {
+            return .white
+        }
+        let luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        return luminance > 0.6 ? .black : .white
+    }
+
     var greetingTexts: [String] {
         let name = appManager.userName
         let greet = name.isEmpty ? "" : ", \(name)"
@@ -317,6 +336,7 @@ struct ChatView: View {
             VStack(spacing: 0) {
                 if let currentThread = currentThread {
                     ConversationView(thread: currentThread, generatingThreadID: generatingThreadID)
+                        .background(.clear)
                 } else {
                     VStack(alignment: .leading, spacing: 0) {
                         TypingGreetingView(
@@ -325,12 +345,12 @@ struct ChatView: View {
                             backspaceSpeed: 0.03,
                             pauseAfterType: 2.5,
                             pauseAfterDelete: 0.5,
-                            isActive: currentThread == nil && !showSettings && !showChats && !showModelPicker && !showOnboarding
+                            isActive: currentThread == nil && !isMenuExpanded && !showModelPicker && !showOnboarding
                         )
                         .padding(.horizontal, 24)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                         .padding(.top, 170)
-                        
+
                         Spacer()
                     }
                     .background {
@@ -348,7 +368,7 @@ struct ChatView: View {
                                 startRadius: 0,
                                 endRadius: 400
                             )
-                            
+
                             // Animated radial blob 2
                             RadialGradient(
                                 colors: [
@@ -362,7 +382,7 @@ struct ChatView: View {
                                 startRadius: 0,
                                 endRadius: 350
                             )
-                            
+
                             // Static dark blue base
                             RadialGradient(
                                 colors: [
@@ -374,13 +394,14 @@ struct ChatView: View {
                                 endRadius: 500
                             )
                         }
-                    }
-                    .onAppear {
-                        generateGreeting()
-                        withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
-                            blobPhase = .pi
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .mask {
+                            SideMenuPanelShape.make()
+                                .fill(.white)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .ignoresSafeArea()
                         }
-                        gradientFlipped = true
                     }
                     .transition(.opacity)
                     .ignoresSafeArea(edges: .all)
@@ -396,11 +417,11 @@ struct ChatView: View {
                         if case .loading = llm.loadState {
                             HStack(spacing: 6) {
                                 ProgressView()
-                                    .tint(.black)
+                                    .tint(.primary)
                                 Text("Loading model...")
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.primary)
                                     .shimmering()
                             }
                             .padding(.horizontal, 14)
@@ -408,7 +429,7 @@ struct ChatView: View {
                             .glassEffect()
                             .padding(.bottom, 6)
                         }
-                        
+
                         ZStack(alignment: .bottom) {
                             VariableBlurView(maxBlurRadius: 4, direction: .blurredBottomClearTop, startOffset: 0.1)
                                 .frame(maxWidth: .infinity)
@@ -431,6 +452,7 @@ struct ChatView: View {
                     .modifier(CustomNavTitle(title: chatTitle))
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .sheet(isPresented: $showModelPicker) {
                 NavigationStack {
                     ModelsSettingsView()
@@ -456,68 +478,20 @@ struct ChatView: View {
             }
             .toolbar {
                 if !isPreview {
-                    if appManager.userInterfaceIdiom == .phone {
-                        ToolbarItem(placement: .principal) {
-                            modelPickerMenu
-                        }
-                        
-                        ToolbarItem(placement: .topBarLeading) {
-                            HStack(spacing: 8) {
-                                Button(action: {
-                                    if appManager.shouldPlayHaptics {
-                                        Haptic.shared.play(.light)
-                                    }
-                                    showSettings.toggle()
-                                }) {
-                                    Image(systemName: "gear")
-                                }
-
-                                Spacer().frame(width: 6)
-
-                                Button(action: {
-//                                appManager.playHaptic()
-                                    showChats.toggle()
-                                }) {
-                                    Image(systemName: "message")
-                                        .contentTransition(.symbolEffect(.replace))
-                                }
-                            }
-                        }
-                        
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button(action: {
-                                if appManager.hasInstalledModels {
-                                    startNewChat()
-                                } else {
-                                    showNoModelAlert = true
-                                }
-                            }) {
-                                Image(systemName: "square.and.pencil")
-                            }
-                            .disabled(!appManager.hasInstalledModels)
-                            .foregroundStyle(appManager.hasInstalledModels ? .primary : .tertiary)
-                        }
-                    } else {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            HStack {
-                                modelPickerMenu
-                                Button(action: {
-                                    if appManager.shouldPlayHaptics {
-                                        Haptic.shared.play(.light)
-                                    }
-                                    appManager.playHaptic()
-                                    showSettings.toggle()
-                                }) {
-                                    Image(systemName: "gear")
-                                }
-                            }
-                        }
+                    ToolbarItem(placement: .principal) {
+                        modelPickerMenu
                     }
                 }
             }
         }
+        .background {
+            Color(.systemBackground)
+                .ignoresSafeArea()
+        }
+        .scrollContentBackground(.hidden)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
-    
+
     private func generateGreeting() {
         launchCount += 1
         let hour = Calendar.current.component(.hour, from: Date())
@@ -604,5 +578,5 @@ struct ChatView: View {
 
 #Preview {
     @FocusState var isPromptFocused: Bool
-    ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showChats: .constant(false), showSettings: .constant(false), showOnboarding: .constant(false))
+    ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showOnboarding: .constant(false))
 }

@@ -1,11 +1,11 @@
 //
-//  CreditsView.swift
+//  LicenseView.swift
 //  Voltaire
 //
 
 import SwiftUI
 
-struct CreditsView: View {
+struct LicenseView: View {
     var body: some View {
         Form {
             Section("Models") {
@@ -110,14 +110,14 @@ struct CreditsView: View {
                 Text("All models are sourced from Hugging Face and are converted for MLX by the mlx-community organization. Model weights are subject to their respective licenses as indicated.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                
+
                 Text("This app uses the MLX framework by Apple for on-device machine learning inference. MLX is open source under the MIT license.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-        .modifier(CustomNavTitle(title: "Credits"))
+        .modifier(CustomNavTitle(title: "Licenses"))
         .navigationPopGestureDisabled(true)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -126,5 +126,5 @@ struct CreditsView: View {
 }
 
 #Preview {
-    CreditsView()
+    LicenseView()
 }
