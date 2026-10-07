@@ -24,7 +24,7 @@ struct ChatView: View {
     @State var prompt = ""
     @FocusState.Binding var isPromptFocused: Bool
     @Binding var showOnboarding: Bool
-    var isMenuExpanded: Bool = false
+    @Binding var isMenuExpanded: Bool
     var menuProgress: CGFloat = 0
 
     @State var thinkingTime: TimeInterval?
@@ -492,8 +492,16 @@ struct ChatView: View {
                     .transition(.opacity)
                     .ignoresSafeArea(edges: .all)
                 }
+}
+        .animation(.easeInOut(duration: 0.4), value: currentThread != nil)
+        .onChange(of: newChatTriggered) { _, triggered in
+            if triggered {
+                prompt = ""
+                currentThread = nil
+                isPromptFocused = true
+                newChatTriggered = false
             }
-            .animation(.easeInOut(duration: 0.4), value: currentThread != nil)
+        }
             .onTapGesture {
                 isPromptFocused = false
             }
@@ -579,8 +587,27 @@ struct ChatView: View {
             }
             .toolbar {
                 if !isPreview {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            isMenuExpanded.toggle()
+                        } label: {
+                            Image(systemName: "line.3.horizontal")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(.primary)
+                        }
+                    }
                     ToolbarItem(placement: .principal) {
                         modelPickerMenu
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            newChatTriggered = true
+                        } label: {
+                            Image(systemName: "square.and.pencil")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(appManager.hasInstalledModels && currentThread != nil ? .primary : .secondary)
+                        }
+                        .disabled(!appManager.hasInstalledModels || currentThread == nil)
                     }
                 }
             }
@@ -683,10 +710,13 @@ struct ChatView: View {
         try? modelContext.save()
     }
 
+    @State private var newChatTriggered = false
+    
     private func startNewChat() {
         prompt = ""
         currentThread = nil
         isPromptFocused = true
+        newChatTriggered = false
     }
 }
 
@@ -729,5 +759,5 @@ struct CameraImagePicker: UIViewControllerRepresentable {
 
 #Preview {
     @FocusState var isPromptFocused: Bool
-    ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showOnboarding: .constant(false))
+    ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showOnboarding: .constant(false), isMenuExpanded: .constant(false))
 }

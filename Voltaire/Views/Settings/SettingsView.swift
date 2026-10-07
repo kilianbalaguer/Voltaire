@@ -97,11 +97,19 @@ struct SettingsView: View {
                 } header: {
                     Text("More")
                 } footer: {
-                    Text("Made in Morocco 🇲🇦")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
+                    VStack(spacing: 8) {
+                        Text("Made in Morocco 🇲🇦")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Image("brain.gear")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 28, height: 28)
+                            .adaptiveLogo()
+                            .opacity(0.5)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 8)
                 }
 
             }

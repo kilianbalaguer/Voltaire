@@ -435,6 +435,7 @@ struct ModelsSettingsView: View {
         case "Granite 4.0": return "The latest models from IBM. Delivers industry-leading performance in tasks like instruction following. Optimized for edge deployments with remarkable inference efficiency."
         case "LLaMa 3.2": return "Small models from Meta. Good for multilingual dialogue and summarization tasks."
         case "Qwen 3": return "Powerful models from the Qwen team, including both text and vision-language models. Supports over 100 languages and excels at creative writing and role-playing."
+        case "MiniCPM 5": return "Lightweight models from OpenBMB. Good for everyday conversations in English and Chinese, coding, and problem-solving."
         default: return "High performance AI model"
         }
     }
@@ -446,6 +447,7 @@ struct ModelsSettingsView: View {
         case "LFM 2", "LFM 2.5": return "LFM"
         case "Ministral 3": return "Ministral"
         case "SmolLM 3": return "SmolLM"
+        case "MiniCPM 5": return "OpenBMB"
         case "Gemma 2", "Gemma 3n": return "Gemma"
         case "Granite 4.0": return "Granite"
         case "LLaMa 3.2", "Llama 3.2": return "LlaMa"
@@ -613,6 +615,12 @@ func getModelDescription(_ model: ModelConfiguration) -> String {
     } else if model.name.contains("Qwen3") && model.name.contains("0.6B") {
         return "The latest model from the Qwen team. It supports over 100 languages and is great for lightweight coding, creative writing, and role-playing. Recommended for iPhone 14 and older."
     }
+    // MiniCPM
+    else if model.name.contains("MiniCPM") && model.name.contains("2B") {
+        return "A model from OpenBMB. Good for coding, math, and working through problems, as well as everyday conversations in English and Chinese. Recommended for iPhone 15 Pro and newer."
+    } else if model.name.contains("MiniCPM") && model.name.contains("1B") {
+        return "A lightweight model from OpenBMB. Good for everyday conversations in English and Chinese, coding help, and answering questions. Recommended for iPhone 15 and newer."
+    }
     return "A powerful AI model capable of general purpose language tasks."
 }
 
@@ -660,6 +668,12 @@ func getModelTags(_ model: ModelConfiguration) -> [String] {
         return ["Thinking"]
     } else if model.name.contains("Qwen3") && model.name.contains("0.6B") {
         return ["Thinking"]
+    }
+    // MiniCPM
+    else if model.name.contains("MiniCPM") && model.name.contains("2B") {
+        return ["Thinking", "New", "Best"]
+    } else if model.name.contains("MiniCPM") {
+        return ["Thinking", "New"]
     }
     return []
 }

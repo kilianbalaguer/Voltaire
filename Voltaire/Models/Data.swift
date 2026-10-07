@@ -161,6 +161,9 @@ class AppManager: ObservableObject {
             "mlx-community/Qwen3-4B-4bit": "Qwen 3 (4B)",
             "mlx-community/Qwen3-1.7B-4bit": "Qwen 3 (1.7B)",
             "mlx-community/Qwen3-0.6B-4bit": "Qwen 3 (0.6B)",
+            // MiniCPM 5
+            "mlx-community/MiniCPM5-1B-4bit": "MiniCPM 5 (1B)",
+            "mlx-community/MiniCPM5-2B-mlx-4Bit": "MiniCPM 5 (2B)",
         ]
         
         // Try exact match first
