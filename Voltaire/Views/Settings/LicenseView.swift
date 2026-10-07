@@ -10,16 +10,6 @@ struct LicenseView: View {
         Form {
             Section("Models") {
                 Group {
-                    Link("DeepSeek R1 Distill (Qwen 1.5B)", destination: URL(string: "https://huggingface.co/mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit")!)
-                        .badge("MIT")
-                    Link("DeepSeek R1 Distill (Qwen 1.5B, 8bit)", destination: URL(string: "https://huggingface.co/mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit")!)
-                        .badge("MIT")
-                    Link("DeepSeek R1 Distill (Llama 8B)", destination: URL(string: "https://huggingface.co/mlx-community/DeepSeek-R1-Distill-Llama-8B-4bit")!)
-                        .badge("MIT")
-                }
-                Group {
-                    Link("Falcon 3 3B Instruct", destination: URL(string: "https://huggingface.co/mlx-community/Falcon3-3B-Instruct-3bit")!)
-                        .badge("Apache-2.0")
                     Link("Bonsai 8B (1bit)", destination: URL(string: "https://huggingface.co/prism-ml/Bonsai-8B-mlx-1bit")!)
                         .badge("Apache-2.0")
                     Link("Ternary Bonsai 8B (2bit)", destination: URL(string: "https://huggingface.co/prism-ml/Ternary-Bonsai-8B-mlx-2bit")!)
@@ -70,10 +60,6 @@ struct LicenseView: View {
                         .badge("Apache-2.0")
                     Link("Gemma 3n E2B", destination: URL(string: "https://huggingface.co/mlx-community/gemma-3n-E2B-4bit")!)
                         .badge("Gemma")
-                    Link("Gemma 3 1B", destination: URL(string: "https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit")!)
-                        .badge("Gemma")
-                    Link("Gemma 3 270M", destination: URL(string: "https://huggingface.co/mlx-community/gemma-3-270m-it-4bit")!)
-                        .badge("Gemma")
                     Link("Gemma 2 2B", destination: URL(string: "https://huggingface.co/mlx-community/gemma-2-2b-it-4bit")!)
                         .badge("Gemma")
                 }
@@ -83,8 +69,6 @@ struct LicenseView: View {
                     Link("Granite 4.0 1B", destination: URL(string: "https://huggingface.co/mlx-community/granite-4.0-h-1b-4bit")!)
                         .badge("Apache-2.0")
                     Link("Granite 4.0 350M", destination: URL(string: "https://huggingface.co/mlx-community/granite-4.0-h-350m-4bit")!)
-                        .badge("Apache-2.0")
-                    Link("Cogito v1 Preview 3B", destination: URL(string: "https://huggingface.co/mlx-community/deepcogito-cogito-v1-preview-llama-3B-4bit")!)
                         .badge("Apache-2.0")
                     Link("Llama 3.2 3B", destination: URL(string: "https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit")!)
                         .badge("Llama")
@@ -96,8 +80,10 @@ struct LicenseView: View {
             Section("Libraries") {
                 Link("MLX Swift", destination: URL(string: "https://github.com/ml-explore/mlx-swift")!)
                     .badge("MIT")
-                Link("MLX Swift Examples", destination: URL(string: "https://github.com/ml-explore/mlx-swift-examples")!)
+                Link("MLX Swift LM", destination: URL(string: "https://github.com/ml-explore/mlx-swift-lm")!)
                     .badge("MIT")
+                Link("Swift Transformers", destination: URL(string: "https://github.com/huggingface/swift-transformers")!)
+                    .badge("Apache-2.0")
                 Link("Swift Markdown UI", destination: URL(string: "https://github.com/gonzalezreal/swift-markdown-ui")!)
                     .badge("MIT")
                 Link("LaTeXSwiftUI", destination: URL(string: "https://github.com/colinc86/LaTeXSwiftUI")!)

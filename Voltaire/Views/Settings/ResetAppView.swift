@@ -252,7 +252,7 @@ struct ResetAppView: View {
             appManager.installedModels.removeAll()
             appManager.currentModelName = nil
             appManager.hasSeenOnboarding = false
-            appManager.systemPrompt = "You are a helpful assistant. You can use Markdown and LaTeX (enclosed in $$) to format your messages, but try not to use Markdown styling in a line that contains a LaTeX formula."
+            appManager.systemPrompt = AppManager.defaultSystemPrompt
             appManager.showKeyboardOnLaunch = false
         }
 

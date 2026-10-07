@@ -8,6 +8,11 @@
 import SwiftUI
 import MLXLMCommon
 import Shimmer
+import PhotosUI
+import UniformTypeIdentifiers
+#if os(iOS)
+import UIKit
+#endif
 
 struct ChatView: View {
     @EnvironmentObject var appManager: AppManager
@@ -27,9 +32,50 @@ struct ChatView: View {
     @State private var generatingThreadID: UUID?
     @State private var showNoModelAlert = false
     @State private var showFeatureWarning = false
-    @State private var blobPhase: CGFloat = 0
+    #if os(iOS)
+    @State private var selectedImage: UIImage?
+    @State private var photoItem: PhotosPickerItem?
+    @State private var showPhotosPicker = false
+    @State private var showCamera = false
+    @State private var showFileImporter = false
+    #endif
+
+    var currentModelSupportsVision: Bool {
+        guard let modelName = appManager.currentModelName,
+              let model = ModelConfiguration.getModelByName(modelName) else { return false }
+        return model.supportsVision
+    }
+
+    var canSendMessage: Bool {
+        if !isPromptEmpty { return true }
+        #if os(iOS)
+        return selectedImage != nil
+        #else
+        return false
+        #endif
+    }
+
+    #if os(iOS)
+    var isCameraAvailable: Bool {
+        UIImagePickerController.isSourceTypeAvailable(.camera)
+    }
+
+    func downscaledJPEGData(_ image: UIImage, maxDimension: CGFloat = 1024) -> Data? {
+        let size = image.size
+        guard size.width > 0, size.height > 0 else { return nil }
+        let scale = min(1, maxDimension / max(size.width, size.height))
+        if scale >= 1 {
+            return image.jpegData(compressionQuality: 0.8)
+        }
+        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let resized = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+        return resized.jpegData(compressionQuality: 0.8)
+    }
+    #endif
     @State private var homeGreeting = ""
-    @State private var gradientFlipped = false
     @AppStorage("launchCount") private var launchCount = 0
     
     public var isPreview = false
@@ -142,29 +188,57 @@ struct ChatView: View {
         }
     }
     
+    /// Thinking switch only for models with a real no-think mechanism
+    /// (Qwen template flag, SmolLM3 system flag). LFM always thinks.
+    var showThinkingSwitch: Bool {
+        guard let modelName = appManager.currentModelName,
+              let model = ModelConfiguration.getModelByName(modelName) else { return false }
+        return model.supportsThinkingSwitch
+    }
+
     var chatInput: some View {
         HStack(alignment: .bottom, spacing: 10) {
             Menu {
                 Button {
+                    #if os(iOS)
+                    showFileImporter = true
+                    #else
                     showFeatureWarning = true
+                    #endif
                 } label: {
                     Label("Attach File", systemImage: "doc")
                 }
-                .disabled(false)
-                
+                .disabled(!appManager.hasInstalledModels || !currentModelSupportsVision)
+
+                #if os(iOS)
+                Button {
+                    showCamera = true
+                } label: {
+                    Label("Take Photo", systemImage: "camera")
+                }
+                .disabled(!appManager.hasInstalledModels || !currentModelSupportsVision || !isCameraAvailable)
+
+                Button {
+                    showPhotosPicker = true
+                } label: {
+                    Label("Attach Photo", systemImage: "photo")
+                }
+                .disabled(!appManager.hasInstalledModels || !currentModelSupportsVision)
+                #else
                 Button {
                     showFeatureWarning = true
                 } label: {
                     Label("Take Photo", systemImage: "camera")
                 }
                 .disabled(false)
-                
+
                 Button {
                     showFeatureWarning = true
                 } label: {
                     Label("Attach Photo", systemImage: "photo")
                 }
                 .disabled(false)
+                #endif
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 20, weight: .semibold))
@@ -176,6 +250,57 @@ struct ChatView: View {
                     )
             }
             .disabled(!appManager.hasInstalledModels)
+            #if os(iOS)
+            .photosPicker(isPresented: $showPhotosPicker, selection: $photoItem, matching: .images)
+            .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.image]) { result in
+                guard case .success(let url) = result else { return }
+                guard url.startAccessingSecurityScopedResource() else { return }
+                defer { url.stopAccessingSecurityScopedResource() }
+                guard let data = try? Data(contentsOf: url),
+                      let uiImage = UIImage(data: data) else { return }
+                selectedImage = uiImage
+            }
+            .sheet(isPresented: $showCamera) {
+                CameraImagePicker(image: $selectedImage)
+            }
+            .onChange(of: photoItem) { _, newItem in
+                guard let newItem else { return }
+                Task {
+                    if let data = try? await newItem.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        selectedImage = uiImage
+                    }
+                    photoItem = nil
+                }
+            }
+            #endif
+
+            if showThinkingSwitch {
+                Button {
+                    if appManager.shouldPlayHaptics {
+                        Haptic.shared.play(.light)
+                    }
+                    appManager.thinkingModeOn.toggle()
+                } label: {
+                    Image(systemName: appManager.thinkingModeOn ? "lightbulb.fill" : "lightbulb")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(appManager.thinkingModeOn ? Color.green : Color.primary)
+                        .frame(width: 48, height: 48)
+                        .background {
+                            if appManager.thinkingModeOn {
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(Color.green.opacity(0.15))
+                            } else {
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(.ultraThinMaterial)
+                            }
+                        }
+                }
+                .buttonStyle(.plain)
+                .disabled(!appManager.hasInstalledModels)
+                .opacity(appManager.hasInstalledModels ? 1 : 0.5)
+                .accessibilityLabel(appManager.thinkingModeOn ? "Thinking on" : "Thinking off")
+            }
             
             HStack(alignment: .bottom, spacing: 0) {
                 if #available(iOS 18.0, *) {
@@ -312,7 +437,7 @@ struct ChatView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 24, height: 24)
         }
-        .disabled((isPromptEmpty && !llm.running) || (llm.running && llm.cancelled))
+        .disabled((!canSendMessage && !llm.running) || (llm.running && llm.cancelled))
         .animation(.default, value: llm.running)
         .animation(.default, value: isPromptEmpty)
         .padding(.trailing, 12)
@@ -345,7 +470,7 @@ struct ChatView: View {
                             backspaceSpeed: 0.03,
                             pauseAfterType: 2.5,
                             pauseAfterDelete: 0.5,
-                            isActive: currentThread == nil && !isMenuExpanded && !showModelPicker && !showOnboarding
+                            isActive: currentThread == nil && !isMenuExpanded && !showModelPicker && !showOnboarding && appManager.splashComplete
                         )
                         .padding(.horizontal, 24)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -354,49 +479,10 @@ struct ChatView: View {
                         Spacer()
                     }
                     .background {
-                        ZStack {
-                            // Animated radial blob 1
-                            RadialGradient(
-                                colors: [
-                                    Color(red: 0.133, green: 0.827, blue: 0.933).opacity(0.7),
-                                    .clear
-                                ],
-                                center: UnitPoint(
-                                    x: 0.8 + 0.15 * sin(blobPhase),
-                                    y: 0.15 + 0.1 * cos(blobPhase * 0.7)
-                                ),
-                                startRadius: 0,
-                                endRadius: 400
-                            )
-
-                            // Animated radial blob 2
-                            RadialGradient(
-                                colors: [
-                                    Color(red: 0.290, green: 0.871, blue: 0.502).opacity(0.5),
-                                    .clear
-                                ],
-                                center: UnitPoint(
-                                    x: 0.7 + 0.1 * cos(blobPhase * 0.8),
-                                    y: 0.25 + 0.15 * sin(blobPhase * 0.6)
-                                ),
-                                startRadius: 0,
-                                endRadius: 350
-                            )
-
-                            // Static dark blue base
-                            RadialGradient(
-                                colors: [
-                                    Color(red: 0.047, green: 0.290, blue: 0.745).opacity(0.4),
-                                    .clear
-                                ],
-                                center: .topTrailing,
-                                startRadius: 0,
-                                endRadius: 500
-                            )
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .ignoresSafeArea()
-                        .mask {
+                        SyncedChatGradientBackground()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .ignoresSafeArea()
+                            .mask {
                             SideMenuPanelShape.make()
                                 .fill(.white)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -430,6 +516,28 @@ struct ChatView: View {
                             .padding(.bottom, 6)
                         }
 
+                        #if os(iOS)
+                        if let selectedImage {
+                            HStack {
+                                Image(uiImage: selectedImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 56, height: 56)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Spacer()
+                                Button {
+                                    self.selectedImage = nil
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.secondary)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .padding(.horizontal, 4)
+                            .padding(.bottom, 6)
+                        }
+                        #endif
+
                         ZStack(alignment: .bottom) {
                             VariableBlurView(maxBlurRadius: 4, direction: .blurredBottomClearTop, startOffset: 0.1)
                                 .frame(maxWidth: .infinity)
@@ -455,17 +563,10 @@ struct ChatView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .sheet(isPresented: $showModelPicker) {
                 NavigationStack {
-                    ModelsSettingsView()
+                    ModelsSettingsView(isSheet: true)
                         .environmentObject(appManager)
                         .environment(llm)
                         .interactiveDismissDisabled(true)
-                        .toolbar {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                Button(action: { showModelPicker = false }) {
-                                    Image(systemName: "xmark")
-                                }
-                            }
-                        }
                 }
             }
             .alert("No Model Installed", isPresented: $showNoModelAlert) {
@@ -521,7 +622,7 @@ struct ChatView: View {
     }
     
     private func generate() {
-        if !isPromptEmpty {
+        if canSendMessage {
             if currentThread == nil {
                 let newThread = Thread()
                 currentThread = newThread
@@ -537,21 +638,34 @@ struct ChatView: View {
                 }
                 
                 Task {
-                    let message = prompt
+                    let rawMessage = prompt
                     prompt = ""
+                    #if os(iOS)
+                    let attachedImageData = selectedImage.flatMap { downscaledJPEGData($0) }
+                    selectedImage = nil
+                    let message = rawMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachedImageData != nil
+                        ? "Describe this image."
+                        : rawMessage
+                    #else
+                    let attachedImageData: Data? = nil
+                    let message = rawMessage
+                    #endif
                     appManager.playHaptic()
-                    sendMessage(Message(role: .user, content: message, thread: currentThread))
+                    sendMessage(Message(role: .user, content: message, thread: currentThread, imageData: attachedImageData))
                     isPromptFocused = true
                     if let modelName = appManager.currentModelName {
-                        var sys = appManager.systemPrompt
+                        var sys = appManager.effectiveSystemPrompt
                         
-//                        if ModelConfiguration.getModelByName(modelName)?.modelType == .reasoning {
-//                            sys += " You are also an advanced AI model, capable of reasoning and understanding complex concepts. However, your current environment has limited compute resources. Use your reasoning ability sparingly, and when you do, make sure to keep the language within your internal dialog concise and don't overthink, as to not exceed your token limit."
-//                        }
+                        if ModelConfiguration.getModelByName(modelName)?.modelType == .reasoning {
+                            sys += " Keep your internal reasoning concise and do not overthink: answer directly."
+                        }
                         
-                        print(sys)
-                        
-                        let output = await llm.generate(modelName: modelName, thread: currentThread, systemPrompt: sys)
+                        let output = await llm.generate(
+                            modelName: modelName,
+                            thread: currentThread,
+                            systemPrompt: sys,
+                            thinkingEnabled: !showThinkingSwitch || appManager.thinkingModeOn
+                        )
                         sendMessage(Message(role: .assistant, content: output, thread: currentThread, generatingTime: llm.thinkingTime))
                         generatingThreadID = nil
                     }
@@ -575,6 +689,43 @@ struct ChatView: View {
         isPromptFocused = true
     }
 }
+
+#if os(iOS)
+struct CameraImagePicker: UIViewControllerRepresentable {
+    @Binding var image: UIImage?
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraImagePicker
+
+        init(parent: CameraImagePicker) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            parent.image = info[.originalImage] as? UIImage
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
+        }
+    }
+}
+#endif
 
 #Preview {
     @FocusState var isPromptFocused: Bool

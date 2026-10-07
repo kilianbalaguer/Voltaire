@@ -6,6 +6,7 @@
 //
 
 import MLXLMCommon
+import CoreImage
 import Foundation
 
 public extension ModelConfiguration {
@@ -15,13 +16,32 @@ public extension ModelConfiguration {
     
     var modelType: ModelType {
         switch self {
-        case .deepseek_r1_distill_qwen_1_5b_4bit, .deepseek_r1_distill_llama_8b_4bit,
-             .qwen3_thinking_4b_4bit,
-             .smollm3_3b_4bit, .cogito_v1_3b_4bit,
+        case .qwen3_thinking_4b_4bit,
+             .smollm3_3b_4bit,
              .lfm2_5_thinking_1_2b_4bit:
             return .reasoning
         default:
             return .regular
+        }
+    }
+
+    /// Whether this model offers the thinking on/off switch: Thinking tag plus
+    /// a real no-think mechanism (Qwen template flag, SmolLM3 system flag).
+    var supportsThinkingSwitch: Bool {
+        guard getModelTags(self).contains("Thinking") else { return false }
+        return familyName.hasPrefix("Qwen") || familyName == "SmolLM 3"
+    }
+
+    /// Whether this model can see attached photos (vision-language models).
+    var supportsVision: Bool {
+        switch self {
+        case .lfm2_5_vl_1_6b_4bit, .lfm2_5_vl_450m_4bit,
+             .lfm2_vl_3b_4bit, .lfm2_vl_1_6b_4bit, .lfm2_vl_450m_4bit,
+             .qwen3_vl_2b_4bit, .qwen3_5_2b_4bit, .qwen3_5_0_8b_4bit,
+             .ministral_3_3b_instruct_4bit, .gemma_3n_e2b_4bit:
+            return true
+        default:
+            return false
         }
     }
 }
@@ -30,26 +50,6 @@ extension ModelConfiguration: @retroactive Equatable {
     public static func == (lhs: MLXLMCommon.ModelConfiguration, rhs: MLXLMCommon.ModelConfiguration) -> Bool {
         return lhs.name == rhs.name
     }
-    
-    // MARK: - DeepSeek R1 (kept)
-    
-    public static let deepseek_r1_distill_qwen_1_5b_4bit = ModelConfiguration(
-        id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit"
-    )
-    
-    public static let deepseek_r1_distill_qwen_1_5b_8bit = ModelConfiguration(
-        id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit"
-    )
-    
-    public static let deepseek_r1_distill_llama_8b_4bit = ModelConfiguration(
-        id: "mlx-community/DeepSeek-R1-Distill-Llama-8B-4bit"
-    )
-    
-    // MARK: - Falcon 3 (kept)
-    
-    public static let falcon3_3b_instruct_3bit = ModelConfiguration(
-        id: "mlx-community/Falcon3-3B-Instruct-3bit"
-    )
     
     // MARK: - Bonsai
     
@@ -145,16 +145,6 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/gemma-3n-E2B-4bit"
     )
     
-    // MARK: - Gemma 3
-    
-    public static let gemma_3_qat_1b_4bit = ModelConfiguration(
-        id: "mlx-community/gemma-3-1b-it-qat-4bit"
-    )
-    
-    public static let gemma_3_270m_4bit = ModelConfiguration(
-        id: "mlx-community/gemma-3-270m-it-4bit"
-    )
-    
     // MARK: - Gemma 2
     
     public static let gemma_2_2b_it_4bit = ModelConfiguration(
@@ -173,12 +163,6 @@ extension ModelConfiguration: @retroactive Equatable {
     
     public static let granite_4_0_350m_4bit = ModelConfiguration(
         id: "mlx-community/granite-4.0-h-350m-4bit"
-    )
-    
-    // MARK: - Cogito v1
-    
-    public static let cogito_v1_3b_4bit = ModelConfiguration(
-        id: "mlx-community/deepcogito-cogito-v1-preview-llama-3B-4bit"
     )
     
     // MARK: - Llama 3.2
@@ -217,12 +201,6 @@ extension ModelConfiguration: @retroactive Equatable {
     
     #if os(iOS)
     public static var availableModels: [ModelConfiguration] = [
-        // DeepSeek R1
-        deepseek_r1_distill_qwen_1_5b_4bit,
-        deepseek_r1_distill_qwen_1_5b_8bit,
-        deepseek_r1_distill_llama_8b_4bit,
-        // Falcon 3
-        falcon3_3b_instruct_3bit,
         // Bonsai
         bonsai_ternary_8b_2bit,
         bonsai_8b_1bit,
@@ -250,17 +228,12 @@ extension ModelConfiguration: @retroactive Equatable {
         smollm3_3b_4bit,
         // Gemma 3n
         gemma_3n_e2b_4bit,
-        // Gemma 3
-        gemma_3_qat_1b_4bit,
-        gemma_3_270m_4bit,
         // Gemma 2
         gemma_2_2b_it_4bit,
         // Granite 4.0
         granite_4_0_micro_4bit,
         granite_4_0_1b_4bit,
         granite_4_0_350m_4bit,
-        // Cogito v1
-        cogito_v1_3b_4bit,
         // Llama 3.2
         llama_3_2_3b_4bit,
         llama_3_2_1b_4bit,
@@ -273,10 +246,6 @@ extension ModelConfiguration: @retroactive Equatable {
     ]
     #else
     public static var availableModels: [ModelConfiguration] = [
-        deepseek_r1_distill_llama_8b_4bit,
-        deepseek_r1_distill_qwen_1_5b_8bit,
-        deepseek_r1_distill_qwen_1_5b_4bit,
-        falcon3_3b_instruct_3bit,
         bonsai_ternary_8b_2bit,
         bonsai_8b_1bit,
         qwen3_5_2b_4bit,
@@ -297,13 +266,10 @@ extension ModelConfiguration: @retroactive Equatable {
         ministral_3_3b_instruct_4bit,
         smollm3_3b_4bit,
         gemma_3n_e2b_4bit,
-        gemma_3_qat_1b_4bit,
-        gemma_3_270m_4bit,
         gemma_2_2b_it_4bit,
         granite_4_0_micro_4bit,
         granite_4_0_1b_4bit,
         granite_4_0_350m_4bit,
-        cogito_v1_3b_4bit,
         llama_3_2_3b_4bit,
         llama_3_2_1b_4bit,
         qwen3_vl_2b_4bit,
@@ -318,7 +284,7 @@ extension ModelConfiguration: @retroactive Equatable {
         #if os(iOS)
         qwen3_0_6b_4bit
         #else
-        deepseek_r1_distill_llama_8b_4bit
+        qwen3_4b_4bit
         #endif
     }
     
@@ -332,7 +298,7 @@ extension ModelConfiguration: @retroactive Equatable {
 
     var supportsSystemRole: Bool {
         switch self {
-        case .gemma_2_2b_it_4bit, .gemma_3_qat_1b_4bit, .gemma_3_270m_4bit, .gemma_3n_e2b_4bit:
+        case .gemma_2_2b_it_4bit, .gemma_3n_e2b_4bit:
             return false
         default:
             return true
@@ -341,7 +307,7 @@ extension ModelConfiguration: @retroactive Equatable {
 
     var requiresAlternatingRoles: Bool {
         switch self {
-        case .gemma_2_2b_it_4bit, .gemma_3_qat_1b_4bit, .gemma_3_270m_4bit, .gemma_3n_e2b_4bit:
+        case .gemma_2_2b_it_4bit, .gemma_3n_e2b_4bit:
             return true
         default:
             return false
@@ -422,9 +388,85 @@ extension ModelConfiguration: @retroactive Equatable {
 
         return history
     }
+
+    /// Chat-message version of the prompt history for vision models, carrying
+    /// any attached photos on their owning messages.
+    func getChatMessages(thread: Thread, systemPrompt: String, useSystemRole: Bool = true) -> [Chat.Message] {
+        func attachedImages(_ data: Data?) -> [UserInput.Image] {
+            guard let data = data, let ciImage = CIImage(data: data) else { return [] }
+            return [UserInput.Image.ciImage(ciImage)]
+        }
+
+        if requiresAlternatingRoles {
+            var messages: [Chat.Message] = []
+            var pendingPrefix = systemPrompt
+            var pendingImages: [UserInput.Image] = []
+
+            func appendUser(content: String, images: [UserInput.Image]) {
+                let text = [pendingPrefix, content].filter { !$0.isEmpty }.joined(separator: "\n\n")
+                let imgs = pendingImages + images
+                pendingPrefix = ""
+                pendingImages = []
+                guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                if let last = messages.last, last.role == .user {
+                    messages[messages.count - 1] = .user(last.content + "\n\n" + text, images: last.images + imgs)
+                } else {
+                    messages.append(.user(text, images: imgs))
+                }
+            }
+
+            for message in thread.sortedMessages {
+                switch message.role {
+                case .system:
+                    pendingPrefix = [pendingPrefix, message.content]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: "\n\n")
+                    pendingImages += attachedImages(message.imageData)
+                case .user:
+                    appendUser(content: formatForTokenizer(message.content), images: attachedImages(message.imageData))
+                case .assistant:
+                    guard !messages.isEmpty else { continue }
+                    messages.append(.assistant(formatForTokenizer(message.content)))
+                }
+            }
+
+            if messages.isEmpty, !pendingPrefix.isEmpty {
+                appendUser(content: "", images: [])
+            }
+
+            if messages.last?.role == .assistant {
+                messages.removeLast()
+            }
+
+            return messages
+        }
+
+        var messages: [Chat.Message] = []
+        if !systemPrompt.isEmpty {
+            messages.append(useSystemRole ? .system(systemPrompt) : .user(systemPrompt))
+        }
+        for message in thread.sortedMessages {
+            let content = formatForTokenizer(message.content)
+            switch message.role {
+            case .system:
+                messages.append(.system(content, images: attachedImages(message.imageData)))
+            case .user:
+                messages.append(.user(content, images: attachedImages(message.imageData)))
+            case .assistant:
+                messages.append(.assistant(content))
+            }
+        }
+        return messages
+    }
     
     func formatForTokenizer(_ message: String) -> String {
         if self.modelType == .reasoning {
+            // Drop thinking traces from history so they don't pollute context.
+            // Handles both <think>...</think> and bare ...</think> (some
+            // reasoning models omit the opening tag).
+            if let endRange = message.range(of: "</think>") {
+                return " " + String(message[endRange.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
             return " " + message
                 .replacingOccurrences(of: "<think>", with: "")
                 .replacingOccurrences(of: "</think>", with: "")
@@ -436,9 +478,6 @@ extension ModelConfiguration: @retroactive Equatable {
     /// Returns the model's approximate size, in GB.
     public var modelSize: Decimal? {
         switch self {
-        case .deepseek_r1_distill_qwen_1_5b_4bit: 1
-        case .deepseek_r1_distill_llama_8b_4bit: 4.5
-        case .falcon3_3b_instruct_3bit: 1.8
         case .bonsai_ternary_8b_2bit: 2.1
         case .bonsai_8b_1bit: 1.2
         case .qwen3_5_2b_4bit: 2.22
@@ -459,13 +498,10 @@ extension ModelConfiguration: @retroactive Equatable {
         case .ministral_3_3b_instruct_4bit: 2.78
         case .smollm3_3b_4bit: 1.73
         case .gemma_3n_e2b_4bit: 2.51
-        case .gemma_3_qat_1b_4bit: 0.733
-        case .gemma_3_270m_4bit: 0.463
         case .gemma_2_2b_it_4bit: 1.47
         case .granite_4_0_micro_4bit: 1.81
         case .granite_4_0_1b_4bit: 1.2
         case .granite_4_0_350m_4bit: 0.372
-        case .cogito_v1_3b_4bit: 1.82
         case .llama_3_2_3b_4bit: 1.81
         case .llama_3_2_1b_4bit: 0.695
         case .qwen3_vl_2b_4bit: 1.8
@@ -476,11 +512,19 @@ extension ModelConfiguration: @retroactive Equatable {
         default: nil
         }
     }
+
+    /// Display size: "x,x GB" for gigabytes, "xxx MB" for megabytes.
+    public var formattedSize: String? {
+        guard let size = modelSize else { return nil }
+        let gb = NSDecimalNumber(decimal: size).doubleValue
+        if gb < 1 {
+            return "\(Int((gb * 1000).rounded())) MB"
+        }
+        return String(format: "%.1f", gb).replacingOccurrences(of: ".", with: ",") + " GB"
+    }
     
     public var familyName: String {
         switch self {
-        case .deepseek_r1_distill_qwen_1_5b_4bit, .deepseek_r1_distill_qwen_1_5b_8bit, .deepseek_r1_distill_llama_8b_4bit: "DeepSeek R1"
-        case .falcon3_3b_instruct_3bit: "Falcon 3"
         case .bonsai_ternary_8b_2bit, .bonsai_8b_1bit: "Bonsai"
         case .qwen3_5_2b_4bit, .qwen3_5_0_8b_4bit: "Qwen 3.5"
         case .lfm2_5_vl_1_6b_4bit, .lfm2_5_vl_450m_4bit, .lfm2_5_thinking_1_2b_4bit, .lfm2_5_1_2b_4bit, .lfm2_5_350m_4bit: "LFM 2.5"
@@ -488,10 +532,8 @@ extension ModelConfiguration: @retroactive Equatable {
         case .ministral_3_3b_instruct_4bit: "Ministral 3"
         case .smollm3_3b_4bit: "SmolLM 3"
         case .gemma_3n_e2b_4bit: "Gemma 3n"
-        case .gemma_3_qat_1b_4bit, .gemma_3_270m_4bit: "Gemma 3"
         case .gemma_2_2b_it_4bit: "Gemma 2"
         case .granite_4_0_micro_4bit, .granite_4_0_1b_4bit, .granite_4_0_350m_4bit: "Granite 4.0"
-        case .cogito_v1_3b_4bit: "Cogito v1"
         case .llama_3_2_3b_4bit, .llama_3_2_1b_4bit: "LLaMa 3.2"
         case .qwen3_vl_2b_4bit, .qwen3_thinking_4b_4bit, .qwen3_4b_4bit, .qwen3_1_7b_4bit, .qwen3_0_6b_4bit: "Qwen 3"
         default: self.name.replacing("mlx-community/", with: "").components(separatedBy: "-")[0].capitalized

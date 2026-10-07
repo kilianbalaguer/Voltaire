@@ -8,6 +8,7 @@
 //import MDLatex
 //import MarkdownUI
 import SwiftUI
+import MLXLMCommon
 
 extension TimeInterval {
     var formatted: String {
@@ -28,11 +29,26 @@ struct MessageView: View {
     @EnvironmentObject var appManager: AppManager
     @State private var collapsed = true
     @Binding var message: Message
+    var isLive: Bool = false
     @State private var showCopied = false
     @State private var showTextSelector = false
     
+    var isReasoningModel: Bool {
+        guard let name = appManager.currentModelName,
+              let model = ModelConfiguration.getModelByName(name) else { return false }
+        return model.modelType == .reasoning || getModelTags(model).contains("Thinking")
+    }
+    
     var isThinking: Bool {
         !message.content.contains("</think>")
+    }
+
+    /// False when the user switched thinking off: live output is pure answer,
+    /// never route it into the thinking card.
+    var thinkingAllowed: Bool {
+        guard let name = appManager.currentModelName,
+              let model = ModelConfiguration.getModelByName(name) else { return true }
+        return !model.supportsThinkingSwitch || appManager.thinkingModeOn
     }
     
     var labelColor: Color = {
@@ -45,7 +61,14 @@ struct MessageView: View {
 
     func processThinkingContent(_ content: String) -> (String?, String?) {
         guard let startRange = content.range(of: "<think>") else {
-            // No <think> tag, return entire content as the second part
+            // Some reasoning models omit the opening
+            // <think> tag and only emit </think> — treat everything before it as thinking
+            if let endRange = content.range(of: "</think>") {
+                let thinking = String(content[..<endRange.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+                let afterThink = String(content[endRange.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                return (thinking.isEmpty ? nil : thinking, afterThink.isEmpty ? nil : afterThink)
+            }
+            // No thinking tags at all, return entire content as the second part
             return (nil, content.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         guard let endRange = content.range(of: "</think>") else {
@@ -78,8 +101,18 @@ struct MessageView: View {
     }
     
     var displayText: String {
-        let (_, afterThink) = processThinkingContent(message.content)
-        return afterThink ?? message.content
+        let (thinking, afterThink) = processThinkingContent(message.content)
+        if let afterThink {
+            return afterThink
+        }
+        // Unclosed thinking block: never leak raw <think> tags into copy/answer text
+        if thinking != nil {
+            return message.content
+                .replacingOccurrences(of: "<think>", with: "")
+                .replacingOccurrences(of: "</think>", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return message.content
     }
     
     var copyMenu: some View {
@@ -112,27 +145,84 @@ struct MessageView: View {
         }
     }
 
-    var thinkingLabel: some View {
-        HStack {
-            Button {
-                collapsed.toggle()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12))
-                    .fontWeight(.medium)
-                    .rotationEffect(.degrees(collapsed ? 0 : 90))
-            }
-            
+    /// Collapsible "Thoughts" card: header row always visible, faded tail
+    /// preview when collapsed, full trace when expanded.
+    func thinkingCard(_ thinking: String) -> some View {
+        Button {
+            collapsed.toggle()
             if isThinking {
-                ProgressView()
-                    .padding(.trailing, 8)
+                llm.collapsed = collapsed
             }
-            
-            Text(isThinking ? "Thinking... (\(time))" : "Thought for \(time)")
-                .italic()
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("Thoughts")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                    if isThinking {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Text(time)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: collapsed ? "chevron.right" : "chevron.down")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.primary)
+                }
+                if collapsed {
+                    // While live, stay calm: header + spinner only, no jumpy preview
+                    if !(isLive && isThinking) {
+                        Text(thinking)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .opacity(0.55)
+                            .lineLimit(3)
+                            .truncationMode(.head)
+                            .mask(
+                                LinearGradient(
+                                    gradient: Gradient(stops: [
+                                        .init(color: .clear, location: 0),
+                                        .init(color: .black, location: 0.4)
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .transition(.opacity)
+                    }
+                } else if isLive && isThinking {
+                    // Cheap plain-text render while streaming; markdown once done
+                    Text(thinking)
+                        .foregroundStyle(.secondary)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .top).combined(with: .opacity),
+                            removal: .opacity
+                        ))
+                } else if !thinking.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    MarkdownView(thinking)
+                        .foregroundStyle(.secondary)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .top).combined(with: .opacity),
+                            removal: .opacity
+                        ))
+                }
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(.systemBackground))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color(.systemGray4), lineWidth: 1)
+            )
         }
-        .buttonStyle(.borderless)
-        .foregroundStyle(.secondary)
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.25), value: collapsed)
     }
 
     var body: some View {
@@ -140,53 +230,15 @@ struct MessageView: View {
             if message.role == .user { Spacer() }
             
             if message.role == .assistant {
-                let (thinking, afterThink) = processThinkingContent(message.content)
+                let (parsedThinking, parsedAnswer) = processThinkingContent(message.content)
+                // Reasoning models can start thinking with no opening tag: while live,
+                // everything before </think> is thinking — keep it out of the answer
+                let streamingThinking = isLive && llm.running && isReasoningModel && thinkingAllowed && parsedThinking == nil && !message.content.contains("</think>")
+                let thinking: String? = parsedThinking ?? (streamingThinking ? message.content : nil)
+                let afterThink: String? = streamingThinking ? nil : parsedAnswer
                 VStack(alignment: .leading, spacing: 16) {
                     if let thinking {
-                        VStack(alignment: .leading, spacing: 12) {
-                            thinkingLabel
-                            if !collapsed {
-                                if !thinking.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    HStack(spacing: 12) {
-                                        Capsule()
-                                            .frame(width: 2)
-                                            .padding(.vertical, 1)
-                                            .foregroundStyle(.fill)
-                                        //                                            MDLatex.render(
-                                        //                                                markdown: thinking,
-                                        //                                                theme: ThemeConfiguration(
-                                        //                                                    backgroundColor: bgColor,
-                                        //                                                    fontColor: labelColor,
-                                        //                                                    fontSize: 16,
-                                        //                                                    fontFamily: "apple-system",
-                                        //                                                    userInteractionEnabled: true
-                                        //                                                ),
-                                        //                                                animation: AnimationConfiguration(isEnabled: true, chunkRenderingDuration: 0.4),
-                                        //                                                width: geo.size.width - 24
-                                        //                                            )
-//                                        Markdown(thinking)
-//                                            .textSelection(.enabled)
-//                                            .markdownTextStyle {
-//                                                ForegroundColor(.secondary)
-//                                            }
-//                                            .markdownTextStyle(\.code) {
-//                                                FontFamilyVariant(.monospaced)
-//                                                FontSize(.em(0.85))
-//                                            }
-                                        MarkdownView(thinking)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    .padding(.leading, 5)
-                                }
-                            }
-                        }
-                        .contentShape(.rect)
-                        .onTapGesture {
-                            collapsed.toggle()
-                            if isThinking {
-                                llm.collapsed = collapsed
-                            }
-                        }
+                        thinkingCard(thinking)
                     }
                     
                     if let afterThink {
@@ -212,7 +264,8 @@ struct MessageView: View {
                         MarkdownView(afterThink)
                     }
                 }
-                .padding(.trailing, 24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12)
                 .contextMenu {
                     copyMenu
                 }
@@ -234,11 +287,23 @@ struct MessageView: View {
                 }
                 .animation(.easeInOut(duration: 0.2), value: showCopied)
             } else {
+            VStack(alignment: .leading, spacing: 8) {
+                #if os(iOS)
+                if let imageData = message.imageData,
+                   let uiImage = UIImage(data: imageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: 256, maxHeight: 256)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                #endif
                 MarkdownView($message.content)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(Color(.systemGray5))
                     .clipShape(RoundedRectangle(cornerRadius: 20))
+            }
                     .padding(.leading, 52)
                     .contextMenu {
                         Button {
@@ -275,8 +340,6 @@ struct MessageView: View {
                     }
                     .animation(.easeInOut(duration: 0.2), value: showCopied)
             }
-            
-            if message.role == .assistant { Spacer() }
         }
         
         .onAppear {
@@ -288,8 +351,10 @@ struct MessageView: View {
             }
         }
         .onChange(of: isThinking) {
-            if llm.running {
+            if llm.running && thinkingAllowed {
                 llm.isThinking = isThinking
+            } else if llm.running {
+                llm.isThinking = false
             }
         }
         .animation(.smooth(duration: 0.2), value: collapsed)
@@ -323,7 +388,7 @@ struct ConversationView: View {
 
                     if llm.running && !llm.output.isEmpty && thread.id == generatingThreadID {
                         VStack {
-                            MessageView(message: $currentMessage)
+                            MessageView(message: $currentMessage, isLive: true)
                         }
                         .padding()
                         .id("output")

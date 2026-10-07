@@ -263,12 +263,14 @@ struct ModelFamily {
 struct ModelsSettingsView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(LLMEvaluator.self) var llm
+    @Environment(\.dismiss) private var dismiss
+    var isSheet: Bool = false
+    @State private var downloadManager = DownloadManager.shared
+    @State private var showDownloads = false
+    @AppStorage("hasSeenModelSizesInfo") private var hasSeenModelSizesInfo = false
     @State private var deviceSupportsMetal3: Bool = true
     @State private var storageUsedString: String = "Calculating..."
     @State private var showDeleteAllModels = false
-    @State private var showExperimentalWarning = false
-    @State private var navigateToExperimental = false
-    @AppStorage("hasAcceptedExperimental") private var hasAcceptedExperimental = false
     
     var modelFamilies: [ModelFamily] {
         let grouped = Dictionary(grouping: ModelConfiguration.availableModels, by: { $0.familyName })
@@ -294,64 +296,42 @@ struct ModelsSettingsView: View {
         }.sorted { $0.name < $1.name }
     }
     
-    var featuredFamilies: [ModelFamily] {
-        modelFamilies.filter { !isExperimental($0.name) }
-    }
-    
-    var experimentalFamilies: [ModelFamily] {
-        modelFamilies.filter { isExperimental($0.name) }
-    }
-    
-    func isExperimental(_ family: String) -> Bool {
-        family == "Gemma 3"
-    }
-    
     var body: some View {
         List {
+            if !hasSeenModelSizesInfo {
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Understanding Model Sizes")
+                                .font(.headline)
+                            Spacer()
+                            Button {
+                                hasSeenModelSizesInfo = true
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        Text("Local models come in different sizes, defined by their number of parameters, usually measured in billions (e.g., 0.6B, 1B, 3B). Bigger models are usually smarter, but also slower, as they use more memory and processing power. Choose a model that balances speed and quality for your needs.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
             Section {
-                ForEach(featuredFamilies, id: \.name) { family in
+                ForEach(modelFamilies, id: \.name) { family in
                     NavigationLink(destination: ModelFamilyDetailView(family: family).environmentObject(appManager).environment(llm)) {
                         ModelFamilyRowView(family: family)
                     }
                 }
             } header: {
-                Text("Featured")
+                Text("Models")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.secondary)
                     .textCase(nil)
-            }
-            
-            if !experimentalFamilies.isEmpty {
-                Section {
-                    Button {
-                        if hasAcceptedExperimental {
-                            navigateToExperimental = true
-                        } else {
-                            showExperimentalWarning = true
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.orange)
-                            Text("Experimental Models")
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(.tertiary)
-                                .imageScale(.small)
-                        }
-                    }
-                } header: {
-                    Text("Experimental")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                        .textCase(nil)
-                } footer: {
-                    Text("These models are unstable and may not work as expected.")
-                        .font(.subheadline)
-                }
             }
             
             Section {
@@ -381,6 +361,39 @@ struct ModelsSettingsView: View {
         }
         .navigationTitle("Manage models")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if isSheet {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showDownloads = true
+                } label: {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "arrow.down.circle")
+                        if downloadManager.activeCount > 0 {
+                            Text("\(downloadManager.activeCount)")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(4)
+                                .background(Circle().fill(.red))
+                                .offset(x: 8, y: -8)
+                        }
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showDownloads) {
+            NavigationStack {
+                DownloadsListView()
+            }
+        }
         .fullScreenCover(isPresented: $showDeleteAllModels) {
             NavigationStack {
                 DeleteAllModelsView()
@@ -396,20 +409,6 @@ struct ModelsSettingsView: View {
         }
         .onChange(of: appManager.installedModels.count) { _, _ in
             refreshStorageMetrics()
-        }
-        .alert("Experimental Models", isPresented: $showExperimentalWarning) {
-            Button("Cancel", role: .cancel) {}
-            Button("Continue") {
-                hasAcceptedExperimental = true
-                navigateToExperimental = true
-            }
-        } message: {
-            Text("These models are experimental and may crash, produce incorrect responses, or behave unexpectedly. Use at your own risk.")
-        }
-        .navigationDestination(isPresented: $navigateToExperimental) {
-            ExperimentalModelsView(families: experimentalFamilies)
-                .environmentObject(appManager)
-                .environment(llm)
         }
         .navigationPopGestureDisabled(true)
     }
@@ -432,30 +431,23 @@ struct ModelsSettingsView: View {
         case "Ministral 3": return "Edge-optimized multimodal models from Mistral AI. Great vision capabilities, support for dozens of languages, and strong adherence to system prompts."
         case "SmolLM 3": return "Small but powerful model by Hugging Face. Great for complex reasoning, long conversations, and use in English, French, Spanish, German, Italian, and Portuguese."
         case "Gemma 3n": return "Powerful models from Google. Optimized for use in mobile devices. Best for content creation, text summarization, and conversational AI."
-        case "Gemma 3": return "Powerful models from Google. Optimized for advanced dialogue tasks and image analysis."
         case "Gemma 2": return "Lightweight and efficient models from Google. Tailored for English-language tasks and communication."
         case "Granite 4.0": return "The latest models from IBM. Delivers industry-leading performance in tasks like instruction following. Optimized for edge deployments with remarkable inference efficiency."
-        case "Cogito v1": return "Hybrid reasoning models from Deep Cogito. Optimized for coding, STEM, instruction following and general helpfulness."
         case "LLaMa 3.2": return "Small models from Meta. Good for multilingual dialogue and summarization tasks."
         case "Qwen 3": return "Powerful models from the Qwen team, including both text and vision-language models. Supports over 100 languages and excels at creative writing and role-playing."
-        case "DeepSeek R1": return "Advanced reasoning models by DeepSeek"
-        case "Falcon 3": return "Leading performance by TII"
         default: return "High performance AI model"
         }
     }
     
     func getIcon(for family: String) -> String {
         switch family {
-        case "DeepSeek R1": return "Deepseek"
-        case "Falcon 3": return "Falcon"
         case "Bonsai": return "Bonsai"
         case "Qwen 3", "Qwen 3.5": return "Gwen"
         case "LFM 2", "LFM 2.5": return "LFM"
         case "Ministral 3": return "Ministral"
         case "SmolLM 3": return "SmolLM"
-        case "Gemma 2", "Gemma 3", "Gemma 3n": return "Gemma"
+        case "Gemma 2", "Gemma 3n": return "Gemma"
         case "Granite 4.0": return "Granite"
-        case "Cogito v1": return "Cogito"
         case "LLaMa 3.2", "Llama 3.2": return "LlaMa"
         default: return "Gemma"
         }
@@ -466,11 +458,7 @@ struct ModelFamilyDetailView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(LLMEvaluator.self) var llm
     let family: ModelFamily
-    @State private var downloadingModels: Set<String> = []
-    @State private var modelDownloadProgress: [String: Double] = [:]
-    @State private var modelDownloadETA: [String: String] = [:]
-    @State private var downloadTasks: [String: Task<Void, Never>] = [:]
-    @State private var downloadStartTimes: [String: Date] = [:]
+    @State private var downloadManager = DownloadManager.shared
     
     var body: some View {
         List {
@@ -479,16 +467,16 @@ struct ModelFamilyDetailView: View {
                     model: model,
                     icon: family.icon,
                     isInstalled: appManager.installedModels.contains(model.name),
-                    isDownloading: downloadingModels.contains(model.name),
-                    downloadProgress: modelDownloadProgress[model.name] ?? 0,
-                    downloadETA: modelDownloadETA[model.name],
-                    onDownload: { downloadModel(model) },
-                    onStop: { cancelDownload(model) },
+                    isDownloading: downloadManager.isDownloading(model.name),
+                    downloadProgress: downloadManager.progress(for: model.name),
+                    downloadETA: downloadManager.eta(for: model.name),
+                    onDownload: { downloadManager.startDownload(model: model, llm: llm, appManager: appManager) },
+                    onStop: { downloadManager.cancelDownload(named: model.name) },
                     onSelect: { selectModel(model) }
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    if appManager.installedModels.contains(model.name) && !downloadingModels.contains(model.name) {
+                    if appManager.installedModels.contains(model.name) && !downloadManager.isDownloading(model.name) {
                         selectModel(model)
                     }
                 }
@@ -507,71 +495,6 @@ struct ModelFamilyDetailView: View {
         .navigationTitle(family.name)
         .navigationBarTitleDisplayMode(.inline)
         .navigationPopGestureDisabled(true)
-        .onDisappear {
-            downloadTasks.values.forEach { $0.cancel() }
-        }
-    }
-    
-    private func downloadModel(_ model: ModelConfiguration) {
-        downloadingModels.insert(model.name)
-        downloadStartTimes[model.name] = Date()
-        
-        let task = Task {
-            let progressTask = Task {
-                while !Task.isCancelled {
-                    let currentProgress = llm.progress
-                    modelDownloadProgress[model.name] = currentProgress
-                    
-                    // Calculate ETA
-                    if let startTime = downloadStartTimes[model.name],
-                       let modelSize = model.modelSize,
-                       currentProgress > 0.01 {
-                        let elapsed = Date().timeIntervalSince(startTime)
-                        let bytesTotal = NSDecimalNumber(decimal: modelSize).doubleValue * 1024 * 1024 * 1024
-                        let bytesDownloaded = bytesTotal * currentProgress
-                        let speed = bytesDownloaded / elapsed
-                        let remaining = bytesTotal - bytesDownloaded
-                        let etaSeconds = remaining / speed
-                        
-                        if etaSeconds < 60 {
-                            modelDownloadETA[model.name] = "\(Int(etaSeconds))s"
-                        } else if etaSeconds < 3600 {
-                            modelDownloadETA[model.name] = "\(Int(etaSeconds / 60))m \(Int(etaSeconds.truncatingRemainder(dividingBy: 60)))s"
-                        } else {
-                            modelDownloadETA[model.name] = "\(Int(etaSeconds / 3600))h \(Int((etaSeconds.truncatingRemainder(dividingBy: 3600)) / 60))m"
-                        }
-                    }
-                    
-                    if currentProgress >= 1.0 { break }
-                    try? await Task.sleep(nanoseconds: 100_000_000)
-                }
-            }
-            
-            await llm.switchModel(model)
-            progressTask.cancel()
-            
-            if !Task.isCancelled {
-                appManager.addInstalledModel(model.name)
-                appManager.currentModelName = model.name
-            }
-            
-            downloadingModels.remove(model.name)
-            modelDownloadProgress.removeValue(forKey: model.name)
-            modelDownloadETA.removeValue(forKey: model.name)
-            downloadStartTimes.removeValue(forKey: model.name)
-            downloadTasks.removeValue(forKey: model.name)
-        }
-        
-        downloadTasks[model.name] = task
-    }
-    
-    private func cancelDownload(_ model: ModelConfiguration) {
-        if let task = downloadTasks[model.name] {
-            task.cancel()
-            downloadTasks.removeValue(forKey: model.name)
-        }
-        downloadingModels.remove(model.name)
-        modelDownloadProgress.removeValue(forKey: model.name)
     }
     
     private func removeModel(_ model: ModelConfiguration) {
@@ -605,40 +528,9 @@ struct ModelFamilyDetailView: View {
     }
 }
 
-struct ExperimentalModelsView: View {
-    @EnvironmentObject var appManager: AppManager
-    @Environment(LLMEvaluator.self) var llm
-    let families: [ModelFamily]
-    
-    var body: some View {
-        List {
-            ForEach(families, id: \.name) { family in
-                Section {
-                    NavigationLink(destination: ModelFamilyDetailView(family: family).environmentObject(appManager).environment(llm)) {
-                        ModelFamilyRowView(family: family)
-                    }
-                }
-            }
-        }
-        .navigationTitle("Experimental")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationPopGestureDisabled(true)
-    }
-}
-
 func getModelDescription(_ model: ModelConfiguration) -> String {
-    // DeepSeek R1
-    if model.name.contains("DeepSeek") && model.name.contains("1.5B") {
-        return "A fast reasoning model from DeepSeek. Good for complex logic on older devices."
-    } else if model.name.contains("DeepSeek") && model.name.contains("8B") {
-        return "An advanced reasoning model from DeepSeek. Excellent at planning and code."
-    }
-    // Falcon 3
-    else if model.name.contains("Falcon") {
-        return "A leading small model from TII with strong performance."
-    }
     // Bonsai
-    else if model.name.contains("Bonsai") && model.name.contains("Ternary") {
+    if model.name.contains("Bonsai") && model.name.contains("Ternary") {
         return "The largest 1.58-bit Bonsai model from PrismML. A bigger, smarter model engineered for efficient on-device inference, delivering strong performance and fast execution. Recommended for iPhone 15 Pro and newer."
     } else if model.name.contains("Bonsai") {
         return "PrismML's flagship 1-bit Bonsai model. Engineered to deliver powerful intelligence for on-device systems. Recommended for iPhone 15 Pro and newer."
@@ -691,12 +583,6 @@ func getModelDescription(_ model: ModelConfiguration) -> String {
     else if model.name.contains("gemma-3n") {
         return "A powerful model from Google. Optimized for use in everyday devices. Great for content creation, text summarization, and conversational AI. Recommended for iPhone 15 Pro and newer."
     }
-    // Gemma 3
-    else if model.name.contains("gemma-3") && model.name.contains("1b") {
-        return "A fast model from Google, with improved memory consumption and better responses compared to the base Gemma 3. Optimized for basic dialogue tasks. Recommended for iPhone 15 and older."
-    } else if model.name.contains("gemma-3") && model.name.contains("270m") {
-        return "A lightweight, efficient and fast model from Google. Good at following instructions, summarization and text structuring, ideal for use with Shortcuts. Recommended for iPhone 14 and older."
-    }
     // Gemma 2
     else if model.name.contains("gemma-2") {
         return "A model from Google. Tailored for English-language tasks and communication. Recommended for iPhone 15 Pro and newer."
@@ -708,10 +594,6 @@ func getModelDescription(_ model: ModelConfiguration) -> String {
         return "The latest dense hybrid ~1.5B parameters model from IBM. Delivers strong performance across benchmarks against models of similar size. Optimized for edge deployments with remarkable inference efficiency. Recommended for iPhone 15 and older."
     } else if model.name.contains("granite-4.0") && model.name.contains("350m") {
         return "The latest dense hybrid 350M parameters model from IBM. Delivers strong performance across benchmarks against models of similar size. Optimized for edge deployments with remarkable inference efficiency. Recommended for iPhone 14 and older."
-    }
-    // Cogito v1
-    else if model.name.contains("cogito") {
-        return "A hybrid reasoning model from Deep Cogito. Optimized for coding, STEM, instruction following and general helpfulness. Supports over 30 languages. Recommended for iPhone 15 Pro and newer."
     }
     // Llama 3.2
     else if model.name.contains("Llama") && model.name.contains("3B") {
@@ -769,10 +651,6 @@ func getModelTags(_ model: ModelConfiguration) -> [String] {
     else if model.name.contains("SmolLM") {
         return ["Thinking"]
     }
-    // Cogito v1
-    else if model.name.contains("cogito") {
-        return ["Thinking"]
-    }
     // Qwen 3
     else if model.name.contains("Qwen3") && model.name.contains("VL") {
         return ["Vision"]
@@ -821,7 +699,7 @@ struct ModelRowView: View {
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title3)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.primary)
                     }
                 } else if isDownloading {
                     Button(action: onStop) {
@@ -852,8 +730,8 @@ struct ModelRowView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
             
-            if let size = model.modelSize {
-                Text("\(NSDecimalNumber(decimal: size).doubleValue, specifier: "%.1f") GB")
+            if let sizeText = model.formattedSize {
+                Text(sizeText)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

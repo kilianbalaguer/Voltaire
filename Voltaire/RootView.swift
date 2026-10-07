@@ -24,6 +24,13 @@ struct RootView: View {
     @FocusState var isPromptFocused: Bool
 
     var body: some View {
+        Group {
+            if showOnboarding || !appManager.hasSeenOnboarding {
+                OnboardingView(showOnboarding: $showOnboarding)
+                    .environmentObject(appManager)
+                    .environment(llm)
+                    .transition(.opacity)
+            } else {
         CustomSideMenu(isEnabled: true, isExpanded: $isMenuExpanded) { progress in
             SideMenuContentView(
                 currentThread: $currentThread,
@@ -62,6 +69,10 @@ struct RootView: View {
                 isPromptFocused = false
             }
         }
+        .transition(.opacity)
+        }
+        }
+        .animation(.easeInOut(duration: 0.4), value: showOnboarding)
         .task {
             if !appManager.hasSeenOnboarding {
                 showOnboarding.toggle()
@@ -70,22 +81,16 @@ struct RootView: View {
                 if let modelName = appManager.currentModelName {
                     _ = try? await llm.load(modelName: modelName)
                 }
+                if appManager.showKeyboardOnLaunch {
+                    isPromptFocused = true
+                }
             }
-        }
-        .sheet(isPresented: $showOnboarding, onDismiss: dismissOnboarding) {
-            OnboardingView(showOnboarding: $showOnboarding)
-                .environment(llm)
-                .interactiveDismissDisabled(true)
         }
         .tint(appManager.appTintColor.getColor())
         .onAppear {
             appManager.incrementNumberOfVisits()
             cleanupOrphanedBlobs()
         }
-    }
-
-    func dismissOnboarding() {
-        isPromptFocused = true
     }
 }
 

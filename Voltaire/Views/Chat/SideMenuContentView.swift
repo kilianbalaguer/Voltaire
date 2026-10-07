@@ -43,17 +43,18 @@ struct SideMenuContentView: View {
                     .padding(.top, 16)
 
                 Spacer(minLength: 0)
-
-                bottomBar
-                    .padding(.top, 12)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(.horizontal, 16)
             .padding(.top, 8)
-            .padding(.bottom, 12)
             .background {
                 Color(.systemBackground)
                     .ignoresSafeArea()
+            }
+            .safeAreaInset(edge: .bottom, alignment: .center, spacing: 0) {
+                bottomBar
+                    .padding(.horizontal, 13)
+                    .padding(.bottom, 13)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -95,11 +96,13 @@ struct SideMenuContentView: View {
                 }
             } label: {
                 Image(systemName: isSearching ? "xmark" : "magnifyingglass")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.primary)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(.thinMaterial))
-                    .glassEffect()
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(.ultraThinMaterial)
+                    )
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Search chats")
@@ -130,23 +133,22 @@ struct SideMenuContentView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(minHeight: 48)
+        .frame(height: 48)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
+            RoundedRectangle(cornerRadius: 24)
                 .fill(.ultraThinMaterial)
         )
     }
 
     private var bottomBar: some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .bottom, spacing: 10) {
             Button {
                 startNewChat()
             } label: {
                 Label("New Chat", systemImage: "square.and.pencil")
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 18)
-                    .frame(height: 44)
+                    .frame(height: 48)
                     .foregroundStyle(newChatForeground)
                     .background(
                         Capsule(style: .continuous)
@@ -166,11 +168,13 @@ struct SideMenuContentView: View {
                 onSelectSettings?()
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.primary)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(.thinMaterial))
-                    .glassEffect()
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(.ultraThinMaterial)
+                    )
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Settings")
@@ -296,13 +300,9 @@ struct SideMenuChatRowStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background {
-                Capsule(style: .continuous)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(.thinMaterial)
                     .opacity(isSelected || configuration.isPressed ? 1 : 0)
-                    .glassEffect(
-                        .regular.interactive(),
-                        in: Capsule(style: .continuous)
-                    )
             }
     }
 }
