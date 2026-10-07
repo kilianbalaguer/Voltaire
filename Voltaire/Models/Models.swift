@@ -29,7 +29,7 @@ public extension ModelConfiguration {
     /// a real no-think mechanism (Qwen template flag, SmolLM3 system flag).
     var supportsThinkingSwitch: Bool {
         guard getModelTags(self).contains("Thinking") else { return false }
-        return familyName.hasPrefix("Qwen") || familyName == "SmolLM 3"
+        return familyName.hasPrefix("Qwen") || familyName == "SmolLM 3" || familyName == "MiniCPM 5"
     }
 
     /// Whether this model can see attached photos (vision-language models).
@@ -197,6 +197,16 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/Qwen3-0.6B-4bit"
     )
     
+    // MARK: - MiniCPM
+    
+    public static let minicpm_1b_4bit = ModelConfiguration(
+        id: "mlx-community/MiniCPM5-1B-4bit"
+    )
+    
+    public static let minicpm_2b_4bit = ModelConfiguration(
+        id: "mlx-community/MiniCPM5-2B-mlx-4Bit"
+    )
+    
     // MARK: - Available Models
     
     #if os(iOS)
@@ -243,6 +253,9 @@ extension ModelConfiguration: @retroactive Equatable {
         qwen3_4b_4bit,
         qwen3_1_7b_4bit,
         qwen3_0_6b_4bit,
+        // MiniCPM
+        minicpm_1b_4bit,
+        minicpm_2b_4bit,
     ]
     #else
     public static var availableModels: [ModelConfiguration] = [
@@ -277,6 +290,9 @@ extension ModelConfiguration: @retroactive Equatable {
         qwen3_4b_4bit,
         qwen3_1_7b_4bit,
         qwen3_0_6b_4bit,
+        // MiniCPM
+        minicpm_1b_4bit,
+        minicpm_2b_4bit,
     ]
     #endif
     
@@ -509,6 +525,8 @@ extension ModelConfiguration: @retroactive Equatable {
         case .qwen3_4b_4bit: 2.26
         case .qwen3_1_7b_4bit: 0.979
         case .qwen3_0_6b_4bit: 0.346
+        case .minicpm_1b_4bit: 0.608
+        case .minicpm_2b_4bit: 1.42
         default: nil
         }
     }
@@ -536,6 +554,7 @@ extension ModelConfiguration: @retroactive Equatable {
         case .granite_4_0_micro_4bit, .granite_4_0_1b_4bit, .granite_4_0_350m_4bit: "Granite 4.0"
         case .llama_3_2_3b_4bit, .llama_3_2_1b_4bit: "LLaMa 3.2"
         case .qwen3_vl_2b_4bit, .qwen3_thinking_4b_4bit, .qwen3_4b_4bit, .qwen3_1_7b_4bit, .qwen3_0_6b_4bit: "Qwen 3"
+        case .minicpm_1b_4bit, .minicpm_2b_4bit: "MiniCPM 5"
         default: self.name.replacing("mlx-community/", with: "").components(separatedBy: "-")[0].capitalized
         }
     }

@@ -58,7 +58,7 @@ struct ChatsListView: View {
                         deleteThread(thread)
                     }
                 } preview: {
-                    ChatView(currentThread: .constant(thread), isPromptFocused: $isPromptFocused, showOnboarding: .constant(false), isPreview: true)
+                    ChatView(currentThread: .constant(thread), isPromptFocused: $isPromptFocused, showOnboarding: .constant(false), isMenuExpanded: .constant(false), isPreview: true)
                         .environment(llm)
                         .environmentObject(appManager)
                 }

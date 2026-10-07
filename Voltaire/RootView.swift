@@ -48,7 +48,7 @@ struct RootView: View {
                 currentThread: $currentThread,
                 isPromptFocused: $isPromptFocused,
                 showOnboarding: $showOnboarding,
-                isMenuExpanded: isMenuExpanded,
+                isMenuExpanded: $isMenuExpanded,
                 menuProgress: progress
             )
         }
