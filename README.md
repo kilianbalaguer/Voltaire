@@ -7,10 +7,10 @@ Voltaire is an on-device AI chat app for iPhone, built with Swift and MLX. It ru
 
 ## Features
 
-- **Text Conversations** — Chat with powerful AI models directly on your device
-- **Vision Models** — Vision-capable models available for download (in-app support coming soon)
+- **Text & Vision** — Chat with text and vision-language models directly on your device
+- **Thinking Mode** — Reasoning models with a thinking on/off toggle where supported
 - **100% Private** — Zero data collection, zero cloud processing
-- **40+ Models** — Llama, Gemma, Qwen, DeepSeek, Cogito, and more
+- **30+ Models** — Llama, Gemma, Qwen, MiniCPM 5, LFM, Granite, and more
 - **Clean UI** — Minimal, focused interface built for everyday use
 - **Offline** — Works without any internet connection once models are downloaded
 
@@ -18,41 +18,24 @@ Voltaire is an on-device AI chat app for iPhone, built with Swift and MLX. It ru
 
 | Model | Family | Size |
 |-------|--------|------|
-| Llama 3.2 1B | LLaMA | 1B |
-| Llama 3.2 3B | LLaMA | 3B |
-| Llama 3.1 8B | LLaMA | 8B |
-| Gemma 2 2B | Gemma | 2B |
-| Gemma 3 4B | Gemma | 4B |
-| Gemma 3 12B | Gemma | 12B |
-| Gemma 3 27B | Gemma | 27B |
-| Gemma 3n E2B | Gemma | 2B |
-| Gemma 3n E4B | Gemma | 4B |
-| Qwen 2.5 1.5B | Qwen | 1.5B |
-| Qwen 2.5 3B | Qwen | 3B |
-| Qwen 2.5 7B | Qwen | 7B |
-| Qwen 3 0.6B | Qwen | 0.6B |
-| Qwen 3 1.7B | Qwen | 1.7B |
-| Qwen 3 4B | Qwen | 4B |
-| Qwen 3 8B | Qwen | 8B |
-| DeepSeek R1 1.5B | DeepSeek | 1.5B |
-| DeepSeek R1 8B | DeepSeek | 8B |
-| DeepSeek R1 14B | DeepSeek | 14B |
-| DeepSeek R1 32B | DeepSeek | 32B |
-| Falcon 3 3B | Falcon | 3B |
-| SmolLM 135M | SmolLM | 135M |
-| SmolLM 360M | SmolLM | 360M |
-| SmolLM 1.7B | SmolLM | 1.7B |
-| Granite 3 2B | Granite | 2B |
-| Granite 3 8B | Granite | 8B |
-| Cogito 1B | LLaMA | 1B |
-| Cogito 3B | LLaMA | 3B |
-| Cogito 8B | LLaMA | 8B |
-| Cogito 14B | LLaMA | 14B |
-| Cogito 32B | LLaMA | 32B |
-| Cogito 70B | LLaMA | 70B |
-| LFM 150M | LFM | 150M |
-| LFM 400M | LFM | 400M |
-| LFM 1B | LFM | 1B |
+| Bonsai (8B, 1-bit / 2-bit) | Bonsai | 8B |
+| Qwen 3.5 2B / 0.8B | Qwen 3.5 | 2B / 0.8B |
+| Qwen 3 4B / 1.7B / 0.6B | Qwen 3 | 4B / 1.7B / 0.6B |
+| Qwen 3 VL 2B | Qwen 3 | 2B |
+| Qwen 3 Thinking 4B | Qwen 3 | 4B |
+| LFM 2.5 VL 1.6B / 450M | LFM 2.5 | 1.6B / 450M |
+| LFM 2.5 Thinking 1.2B | LFM 2.5 | 1.2B |
+| LFM 2.5 1.2B / 350M | LFM 2.5 | 1.2B / 350M |
+| LFM 2 VL 3B / 1.6B / 450M | LFM 2 | 3B / 1.6B / 450M |
+| LFM 2 2.6B / 1.2B / 700M / 350M | LFM 2 | 2.6B / 1.2B / 700M / 350M |
+| Ministral 3 Instruct 3B | Ministral 3 | 3B |
+| SmolLM 3 | SmolLM 3 | 3B |
+| Gemma 3n | Gemma 3n | 2B |
+| Gemma 2 2B | Gemma 2 | 2B |
+| Granite 4.0 Micro / 1B / 350M | Granite 4.0 | 3B / 1B / 350M |
+| Llama 3.2 Instruct 3B / 1B | LLaMa 3.2 | 3B / 1B |
+| MiniCPM 5 (1B) | MiniCPM 5 | 1B |
+| MiniCPM 5 (2B) | MiniCPM 5 | 2B |
 
 All models are downloaded from Hugging Face and stored locally on your device.
 
