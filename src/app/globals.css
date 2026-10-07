@@ -12,8 +12,8 @@
 	--bg-card-hover: #27272a;
 	--text: #fafafa;
 	--text-muted: #a1a1aa;
-	--accent: #22d3ee;
-	--accent2: #3b82f6;
+	--accent: #ffffff;
+	--accent2: #d4d4d8;
 	--border: #27272a;
 	--radius: 16px;
 }
@@ -83,6 +83,7 @@ a:hover {
 .nav-brand img {
 	width: 36px;
 	height: 36px;
+	filter: brightness(0) invert(1);
 }
 
 .nav-links {
@@ -231,7 +232,7 @@ a:hover {
 
 .hero-cta:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 8px 32px rgba(34, 211, 238, 0.25);
+	box-shadow: 0 8px 32px rgba(255, 255, 255, 0.25);
 	color: #000;
 }
 
@@ -293,7 +294,7 @@ a:hover {
 	width: 48px;
 	height: 48px;
 	border-radius: 12px;
-	background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(59, 130, 246, 0.15));
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15));
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -324,7 +325,7 @@ a:hover {
 	letter-spacing: 0.05em;
 	padding: 3px 8px;
 	border-radius: 6px;
-	background: rgba(34, 211, 238, 0.12);
+	background: rgba(255, 255, 255, 0.12);
 	color: var(--accent);
 	white-space: nowrap;
 }
@@ -336,9 +337,33 @@ a:hover {
 }
 
 .models-grid {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	display: flex;
+	flex-wrap: wrap;
 	gap: 16px;
+	justify-content: center;
+}
+
+.models-grid > * {
+	flex: 0 0 calc(25% - 12px);
+	min-width: 140px;
+}
+
+@media (max-width: 992px) {
+	.models-grid > * {
+		flex: 0 0 calc(33.333% - 11px);
+	}
+}
+
+@media (max-width: 768px) {
+	.models-grid > * {
+		flex: 0 0 calc(50% - 8px);
+	}
+}
+
+@media (max-width: 480px) {
+	.models-grid > * {
+		flex: 0 0 100%;
+	}
 }
 
 .model-card {
@@ -544,7 +569,7 @@ a:hover {
 	letter-spacing: 0.05em;
 	padding: 4px 10px;
 	border-radius: 6px;
-	background: rgba(34, 211, 238, 0.12);
+	background: rgba(255, 255, 255, 0.12);
 	color: var(--accent);
 	margin-left: auto;
 }
@@ -647,7 +672,7 @@ a:hover {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(59, 130, 246, 0.15));
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15));
 	border-radius: 8px;
 	flex-shrink: 0;
 }
@@ -823,14 +848,14 @@ a:hover {
 	background: transparent;
 	border: none;
 	outline: none;
-	box-shadow: 0 0 40px rgba(34, 211, 238, 0.2), 0 0 80px rgba(59, 130, 246, 0.12);
+	box-shadow: 0 0 40px rgba(255, 255, 255, 0.2), 0 0 80px rgba(255, 255, 255, 0.12);
 	border-radius: 8px;
 	transition: box-shadow 0.3s, transform 0.3s;
 	cursor: not-allowed;
 }
 
 .coming-soon-cta:hover {
-	box-shadow: 0 0 60px rgba(34, 211, 238, 0.35), 0 0 100px rgba(59, 130, 246, 0.2);
+	box-shadow: 0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.2);
 	transform: translateY(-2px);
 }
 
@@ -872,6 +897,7 @@ a:hover {
 .footer-brand img {
 	width: 28px;
 	height: 28px;
+	filter: brightness(0) invert(1);
 }
 
 .footer-links {
@@ -977,15 +1003,15 @@ a:hover {
 	align-items: center;
 	gap: 10px;
 	padding: 12px 20px;
-	background: linear-gradient(135deg, rgba(34, 211, 238, 0.08), rgba(59, 130, 246, 0.08));
-	border: 1px solid rgba(34, 211, 238, 0.2);
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08));
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 999px;
 	transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .coming-soon-device:hover {
 	border-color: var(--accent);
-	box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
+	box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
 }
 
 .coming-soon-device i {
@@ -1005,7 +1031,7 @@ a:hover {
 	letter-spacing: 0.05em;
 	padding: 4px 10px;
 	border-radius: 999px;
-	background: rgba(34, 211, 238, 0.15);
+	background: rgba(255, 255, 255, 0.15);
 	color: var(--accent);
 }
 

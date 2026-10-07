@@ -11,24 +11,23 @@ const models = [
   { name: "Llama", description: "Meta's flagship family", logo: "/images/meta-logo.png", alt: "Meta Llama" },
   { name: "Gemma", description: "Google's lightweight AI", logo: "/images/google-logo.png", alt: "Google Gemma" },
   { name: "SmolLM", description: "Hugging Face models", logo: "/images/huggingface-logo.png", alt: "Hugging Face SmolLM" },
-  { name: "DeepSeek", description: "Reasoning & coding", logo: "/images/deepseek-logo.png", alt: "DeepSeek" },
+  { name: "MiniCPM 5", description: "OpenBMB's reasoning & coding", logo: "/images/OpenBMB.png", alt: "OpenBMB MiniCPM 5" },
   { name: "Qwen", description: "Alibaba multilingual", logo: "/images/qwen-logo.png", alt: "Qwen" },
   { name: "Granite", description: "IBM enterprise AI", logo: "/images/ibm-logo.png", alt: "IBM Granite" },
-  { name: "Cogito", description: "Reasoning-focused", logo: "/images/cogito-logo.png", alt: "Deep Cogito" },
   { name: "LFM", description: "Liquid Foundation Models", logo: "/images/liquid-logo.png", alt: "Liquid AI LFM", white: true },
 ];
 
 const features = [
   { icon: "fa-solid fa-comments", title: "Text Conversations", description: "Chat with powerful AI models directly on your device. Fast, responsive, and completely offline." },
-  { icon: "fa-solid fa-eye", title: "Vision", description: "Vision-capable models available for download in-app. Vision support coming soon.", comingSoon: true },
+  { icon: "fa-solid fa-eye", title: "Vision", description: "Vision-capable models available for download in-app. Analyze images directly on your device." },
   { icon: "fa-solid fa-microphone-lines", title: "Voice Input", description: "Speak your prompts instead of typing. Hands-free interaction that's fast and natural. Coming soon.", comingSoon: true },
-  { icon: "fa-solid fa-folder-open", title: "File Support", description: "Drop files into your conversations for AI-powered summaries and analysis. Coming soon.", comingSoon: true },
+  { icon: "fa-solid fa-folder-open", title: "File Support", description: "Drop files into your conversations for AI-powered summaries and analysis." },
   { icon: "fa-solid fa-shield-halved", title: "100% Private", description: "Zero data collection. Zero cloud processing. Everything stays on your device, always." },
-  { icon: "fa-solid fa-puzzle-piece", title: "40+ Models", description: "Choose from Llama, Gemma, Qwen, DeepSeek, and more. Pick the right model for every task." },
+  { icon: "fa-solid fa-puzzle-piece", title: "40+ Models", description: "Choose from Llama, Gemma, Qwen, MiniCPM 5, and more. Pick the right model for every task." },
 ];
 
 const faqs = [
-  { question: "What AI models does Voltaire support?", answer: "Voltaire supports Meta Llama 3.2 & 3.1, Google Gemma 2, 3 & 3n, Qwen 2 VL, 2.5 & 3, DeepSeek R1, and more. All models run completely offline." },
+  { question: "What AI models does Voltaire support?", answer: "Voltaire supports Meta Llama 3.2 & 3.1, Google Gemma 2, 3 & 3n, Qwen 2 VL, 2.5 & 3, MiniCPM 5, and more. All models run completely offline." },
   { question: "Does it work without internet?", answer: "Yes! Once you download a model, everything runs locally. No internet connection needed for any AI processing." },
   { question: "Is my data private?", answer: "Absolutely. Your data never leaves your device. No cloud processing, no data collection, no tracking." },
   { question: "What devices are supported?", answer: "Voltaire is available on iPhone now. iPad and Mac support coming soon." },

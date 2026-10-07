@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Voltaire - Run AI Models Locally on iPhone, iPad & Mac",
   description:
-    "Run DeepSeek, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Zero data collection. Complete privacy. Optimized for Apple Silicon with MLX.",
+    "Run MiniCPM 5, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Zero data collection. Complete privacy. Optimized for Apple Silicon with MLX.",
   keywords: [
     "AI app",
     "local AI",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Apple Silicon",
     "MLX",
     "LLM",
-    "DeepSeek",
+    "MiniCPM 5",
     "Qwen",
     "Gemma",
     "Llama",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Voltaire - Run AI Models Locally on iPhone, iPad & Mac",
     description:
-      "Run DeepSeek, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Zero data collection. Complete privacy.",
+      "Run MiniCPM 5, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Zero data collection. Complete privacy.",
     type: "website",
     locale: "en_US",
     siteName: "Voltaire",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Voltaire - Run AI Models Locally on iPhone, iPad & Mac",
     description:
-      "Run DeepSeek, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Complete privacy.",
+      "Run MiniCPM 5, Qwen, Gemma, Llama, and 40+ AI models directly on your iPhone, iPad, and Mac. 100% offline. Complete privacy.",
     images: ["/images/og-image.png"],
     creator: "@voltaire",
   },
