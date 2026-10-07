@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(LLMEvaluator.self) var llm
+    @Environment(\.modelContext) private var modelContext
     @Binding var currentThread: Thread?
     var onDismiss: (() -> Void)? = nil
     @State private var showResetApp = false
+    @State private var showDeleteChatsAlert = false
 
     var body: some View {
         NavigationStack {
@@ -22,12 +25,35 @@ struct SettingsView: View {
                         Label("Manage models", systemImage: "cube")
                     }
 
-                    NavigationLink(destination: ChatsSettingsView(currentThread: $currentThread)) {
+                    NavigationLink(destination: ChatsSettingsView()) {
                         Label("Personalization", systemImage: "person")
                     }
 
                     Toggle(isOn: $appManager.showKeyboardOnLaunch) {
                         Label("Show keyboard on launch", systemImage: "keyboard")
+                    }
+                    .tint(.green)
+
+                    Button {
+                        showDeleteChatsAlert = true
+                    } label: {
+                        Label("Delete all chats", systemImage: "trash")
+                            .foregroundStyle(.red)
+                    }
+                    .alert("Delete all chats?", isPresented: $showDeleteChatsAlert) {
+                        Button("Cancel", role: .cancel) {}
+                        Button("Delete", role: .destructive) {
+                            deleteChats()
+                        }
+                    } message: {
+                        Text("This will permanently delete all chats and messages. This cannot be undone.")
+                    }
+
+                    Button {
+                        showResetApp = true
+                    } label: {
+                        Label("Reset App Completely", systemImage: "arrow.counterclockwise")
+                            .foregroundStyle(.red)
                     }
                 }
 
@@ -44,6 +70,13 @@ struct SettingsView: View {
                         Label("Licenses", systemImage: "doc.plaintext")
                     }
 
+                    Label("Version \(Bundle.main.releaseVersionNumber ?? "0") (\(Bundle.main.buildVersionNumber ?? "0"))", systemImage: "info.circle")
+                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("About")
+                }
+
+                Section {
                     Link(destination: URL(string: "https://voltaireai.app")!) {
                         HStack {
                             Label("Website", systemImage: "globe")
@@ -61,11 +94,8 @@ struct SettingsView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-
-                    Label("Version \(Bundle.main.releaseVersionNumber ?? "0").\(Bundle.main.buildVersionNumber ?? "0")", systemImage: "info.circle")
-                        .foregroundStyle(.secondary)
                 } header: {
-                    Text("About")
+                    Text("More")
                 } footer: {
                     Text("Made in Morocco 🇲🇦")
                         .font(.footnote)
@@ -74,14 +104,6 @@ struct SettingsView: View {
                         .multilineTextAlignment(.center)
                 }
 
-                Section("Danger Zone") {
-                    Button {
-                        showResetApp = true
-                    } label: {
-                        Label("Reset App Completely", systemImage: "arrow.counterclockwise")
-                            .foregroundStyle(.red)
-                    }
-                }
             }
             .formStyle(.grouped)
             .navigationBarTitleDisplayMode(.inline)
@@ -104,6 +126,26 @@ struct SettingsView: View {
             }
         }
         .tint(appManager.appTintColor.getColor())
+    }
+
+    func deleteChats() {
+        currentThread = nil
+        do {
+            let messages = try modelContext.fetch(FetchDescriptor<Message>())
+            for message in messages {
+                modelContext.delete(message)
+            }
+            let threads = try modelContext.fetch(FetchDescriptor<Thread>())
+            for thread in threads {
+                modelContext.delete(thread)
+            }
+            try modelContext.save()
+            if appManager.shouldPlayHaptics {
+                Haptic.shared.play(.medium)
+            }
+        } catch {
+            print("Failed to delete chats:", error)
+        }
     }
 }
 

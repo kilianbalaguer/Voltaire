@@ -10,7 +10,21 @@ import SwiftData
 import MLXLMCommon
 
 class AppManager: ObservableObject {
-    @AppStorage("systemPrompt") var systemPrompt = "You are a helpful assistant. You can use Markdown and LaTeX (enclosed in $$) to format your messages, but try not to use Markdown styling in a line that contains a LaTeX formula."
+    static let defaultSystemPrompt = "You are a helpful AI assistant in an app called Voltaire. Be clear, concise, and practical. Use Markdown when it improves readability (lists, code blocks, bold). Do not invent facts — if you are unsure, say so. You are not the historical philosopher Voltaire or any other person."
+    static let temperatureOptions = ["Default", "Precise - 0.0", "Consistent - 0.2", "Balanced - 0.4", "Creative - 0.6", "Very creative - 0.8", "Experimental - 1.0"]
+
+    static func temperatureValue(for option: String) -> Double {
+        if option == "Default" { return 0.5 }
+        if let last = option.split(separator: " ").last, let value = Double(last) {
+            return value
+        }
+        return 0.5
+    }
+
+    @AppStorage("systemPromptV2") var systemPrompt = AppManager.defaultSystemPrompt
+    @AppStorage("customizationEnabled") var customizationEnabled = false
+    @AppStorage("customTemperature") var customTemperature = "Default"
+    @AppStorage("thinkingModeOn") var thinkingModeOn = true
     @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
     @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
     @AppStorage("appFontSize") var appFontSize: AppFontSize = .small
@@ -20,10 +34,20 @@ class AppManager: ObservableObject {
     @AppStorage("showKeyboardOnLaunch") var showKeyboardOnLaunch = false
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
-    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding = false
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding = false {
+        didSet { objectWillChange.send() }
+    }
     @AppStorage("userName") var userName = ""
     
     var hasInstalledModels: Bool { !installedModels.isEmpty }
+
+    /// The prompt actually sent to models: custom instructions when enabled, otherwise the default.
+    var effectiveSystemPrompt: String {
+        if customizationEnabled, !systemPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return systemPrompt
+        }
+        return Self.defaultSystemPrompt
+    }
     
     var userInterfaceIdiom: LayoutType {
         return UIDevice.current.userInterfaceIdiom == .pad ? .pad : .phone
@@ -40,9 +64,22 @@ class AppManager: ObservableObject {
             saveInstalledModelsToUserDefaults()
         }
     }
+
+    /// Transient launch state: true once splash/onboarding intros are done
+    /// and the home greeting is allowed to start typing.
+    @Published var splashComplete = false
     
     init() {
         loadInstalledModelsFromUserDefaults()
+        // Drop models that no longer exist (e.g. removed families)
+        let known = Set(ModelConfiguration.availableModels.map(\.name))
+        let filtered = installedModels.filter { known.contains($0) }
+        if filtered.count != installedModels.count {
+            installedModels = filtered
+        }
+        if let current = currentModelName, !known.contains(current) {
+            currentModelName = nil
+        }
     }
     
     func incrementNumberOfVisits() {
@@ -82,12 +119,6 @@ class AppManager: ObservableObject {
     func modelDisplayName(_ modelName: String) -> String {
         // Known model display names mapping
         let displayNames: [String: String] = [
-            // DeepSeek R1
-            "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit": "DeepSeek R1 Distill Qwen (1.5B)",
-            "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit": "DeepSeek R1 Distill Qwen (1.5B)",
-            "mlx-community/DeepSeek-R1-Distill-Llama-8B-4bit": "DeepSeek R1 Distill Llama (8B)",
-            // Falcon 3
-            "mlx-community/Falcon3-3B-Instruct-3bit": "Falcon 3 Instruct (3B)",
             // Bonsai
             "prism-ml/Ternary-Bonsai-8B-mlx-2bit": "Bonsai Ternary (8B)",
             "prism-ml/Bonsai-8B-mlx-1bit": "Bonsai (8B)",
@@ -115,17 +146,12 @@ class AppManager: ObservableObject {
             "mlx-community/SmolLM3-3B-4bit": "SmolLM 3 (3B)",
             // Gemma 3n
             "mlx-community/gemma-3n-E2B-4bit": "Gemma 3n (2B)",
-            // Gemma 3
-            "mlx-community/gemma-3-1b-it-qat-4bit": "Gemma 3 QAT (1B)",
-            "mlx-community/gemma-3-270m-it-4bit": "Gemma 3 (270M)",
             // Gemma 2
             "mlx-community/gemma-2-2b-it-4bit": "Gemma 2 (2B)",
             // Granite 4.0
             "mlx-community/granite-4.0-h-micro-4bit": "Granite 4.0 Micro (3B)",
             "mlx-community/granite-4.0-h-1b-4bit": "Granite 4.0 (1B)",
             "mlx-community/granite-4.0-h-350m-4bit": "Granite 4.0 (350M)",
-            // Cogito v1
-            "mlx-community/deepcogito-cogito-v1-preview-llama-3B-4bit": "Cogito v1 (3B)",
             // Llama 3.2
             "mlx-community/Llama-3.2-3B-Instruct-4bit": "Llama 3.2 Instruct (3B)",
             "mlx-community/Llama-3.2-1B-Instruct-4bit": "Llama 3.2 Instruct (1B)",
@@ -196,16 +222,18 @@ class Message {
     var content: String
     var timestamp: Date
     var generatingTime: TimeInterval?
+    var imageData: Data?
     
     @Relationship(inverse: \Thread.messages) var thread: Thread?
     
-    init(role: Role, content: String, thread: Thread? = nil, generatingTime: TimeInterval? = nil) {
+    init(role: Role, content: String, thread: Thread? = nil, generatingTime: TimeInterval? = nil, imageData: Data? = nil) {
         self.id = UUID()
         self.role = role
         self.content = content
         self.timestamp = Date()
         self.thread = thread
         self.generatingTime = generatingTime
+        self.imageData = imageData
     }
 }
 

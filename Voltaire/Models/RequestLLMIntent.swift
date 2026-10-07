@@ -60,7 +60,7 @@ You never reply with more than FOUR sentences even if asked to.
             
             let message = Message(role: .user, content: prompt, thread: thread)
             thread.messages.append(message)
-            var output = await llm.generate(modelName: modelName, thread: thread, systemPrompt: appManager.systemPrompt + systemPrompt)
+            var output = await llm.generate(modelName: modelName, thread: thread, systemPrompt: appManager.effectiveSystemPrompt + systemPrompt, thinkingEnabled: appManager.thinkingModeOn)
             
             let maxCharacters = maxCharacters ?? .max
             

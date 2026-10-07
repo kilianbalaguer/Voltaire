@@ -96,7 +96,7 @@ struct DeleteAllModelsView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "internaldrive")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.primary)
                 Text("Downloaded Models")
                     .font(.subheadline)
                     .fontWeight(.semibold)

@@ -13,16 +13,12 @@ struct OnboardingInstallModelView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(LLMEvaluator.self) var llm
     @State private var deviceSupportsMetal3: Bool = true
-    @Binding var showOnboarding: Bool
-    @State var selectedModel = ModelConfiguration.defaultModel
+    @Binding var selectedModel: ModelConfiguration
+    var onInstall: () -> Void
     let suggestedModel = ModelConfiguration.defaultModel
 
     func sizeBadge(_ model: ModelConfiguration?) -> String? {
-        guard let size = model?.modelSize else { return nil }
-        if size < 1 {
-            return "\(Int(truncating: (size * 1000) as NSNumber)) MB"
-        }
-        return "\(size) GB"
+        model?.formattedSize
     }
 
     var modelsList: some View {
@@ -70,8 +66,10 @@ struct OnboardingInstallModelView: View {
                         HStack {
                             Text(appManager.modelDisplayName(suggestedModel.name))
                                 .tint(.primary)
-                            Spacer()
-                            Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
+                                Spacer()
+                                Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
+                                    .renderingMode(.template)
+                                    .foregroundStyle(.primary)
                         }
                     }
                 }
@@ -85,15 +83,16 @@ struct OnboardingInstallModelView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(appManager.modelDisplayName(model.name))
                                         .tint(.primary)
-                                    if let size = model.modelSize {
-                                        let sizeStr = size < 1 ? "\(Int(truncating: (size * 1000) as NSNumber)) MB" : "\(size) GB"
-                                        Text(sizeStr)
+                                    if let sizeText = model.formattedSize {
+                                        Text(sizeText)
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     }
                                 }
                                 Spacer()
                                 Image(systemName: selectedModel.name == model.name ? "checkmark.circle.fill" : "circle")
+                                    .renderingMode(.template)
+                                    .foregroundStyle(.primary)
                             }
                         }
                     }
@@ -106,6 +105,7 @@ struct OnboardingInstallModelView: View {
         VStack {
             if deviceSupportsMetal3 {
                 modelsList
+                    .scrollContentBackground(.hidden)
                     .task {
                         checkModels()
                     }
@@ -118,21 +118,13 @@ struct OnboardingInstallModelView: View {
                 DeviceNotSupportedView()
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Skip") {
-                    appManager.hasSeenOnboarding = true
-                    showOnboarding = false
-                }
-            }
-        }
         .onAppear {
             checkMetal3Support()
         }
     }
     
     var installButton: some View {
-        NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+        Button(action: onInstall) {
             Text("Install")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
@@ -141,6 +133,7 @@ struct OnboardingInstallModelView: View {
         }
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.capsule)
+        .tint(.primary)
         .padding(.horizontal)
         .disabled(filteredModels.isEmpty)
     }
@@ -172,8 +165,9 @@ struct OnboardingInstallModelView: View {
 
 #Preview {
     @Previewable @State var appManager = AppManager()
+    @Previewable @State var selectedModel = ModelConfiguration.defaultModel
 
-    OnboardingInstallModelView(showOnboarding: .constant(true))
+    OnboardingInstallModelView(selectedModel: $selectedModel, onInstall: {})
         .environmentObject(appManager)
         .environment(LLMEvaluator())
 }

@@ -22,7 +22,7 @@ struct DownloadIndicator: View {
                 Circle()
                     .trim(from: 0, to: CGFloat(progress))
                     .stroke(style: .init(lineWidth: 6, lineCap: .round, lineJoin: .round))
-                    .foregroundStyle(.tint)
+                    .foregroundStyle(.primary)
                     .rotationEffect(.degrees(-90))
                     .frame(width: 58, height: 58)
             }
@@ -31,9 +31,9 @@ struct DownloadIndicator: View {
 }
 
 struct OnboardingDownloadingModelProgressView: View {
-    @Binding var showOnboarding: Bool
     @EnvironmentObject var appManager: AppManager
     @Binding var selectedModel: ModelConfiguration
+    var onDone: () -> Void
     @Environment(LLMEvaluator.self) var llm
     @State var didSwitchModel = false
     @State var progress = 0.0
@@ -71,8 +71,7 @@ struct OnboardingDownloadingModelProgressView: View {
             
             if installed {
                 Button(action: {
-                    appManager.hasSeenOnboarding = true
-                    showOnboarding = false
+                    onDone()
                 }) {
                     Text("Done")
                         .font(.headline)
@@ -82,6 +81,7 @@ struct OnboardingDownloadingModelProgressView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
+                .tint(.primary)
                 .padding(.horizontal)
             } else {
                 Text("Keep this screen open and wait for the installation to complete.")
@@ -141,7 +141,7 @@ struct OnboardingDownloadingModelProgressView: View {
 }
 
 #Preview {
-    OnboardingDownloadingModelProgressView(showOnboarding: .constant(true), selectedModel: .constant(ModelConfiguration.defaultModel))
+    OnboardingDownloadingModelProgressView(selectedModel: .constant(ModelConfiguration.defaultModel), onDone: {})
         .environmentObject(AppManager())
         .environment(LLMEvaluator())
 }

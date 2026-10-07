@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OnboardingNameView: View {
-    @Binding var showOnboarding: Bool
+    var onContinue: () -> Void
     @EnvironmentObject var appManager: AppManager
     @State private var name = ""
     @FocusState private var isNameFocused: Bool
@@ -50,7 +50,7 @@ struct OnboardingNameView: View {
                         appManager.userName = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
                     }
                 
-                NavigationLink(destination: OnboardingInstallModelView(showOnboarding: $showOnboarding)) {
+                Button(action: onContinue) {
                     Text("Continue")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -59,20 +59,20 @@ struct OnboardingNameView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
+                .tint(.primary)
                 .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .modifier(CustomNavTitle(title: "Welcome"))
-        .toolbar(.hidden)
         .onAppear {
+            name = appManager.userName
             isNameFocused = true
         }
     }
 }
 
 #Preview {
-    OnboardingNameView(showOnboarding: .constant(true))
+    OnboardingNameView(onContinue: {})
         .environmentObject(AppManager())
 }
