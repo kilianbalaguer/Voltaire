@@ -18,12 +18,20 @@ export default function ModelsCatalog() {
 
   const [active, setActive] = useState("all");
 
-  const showVoltaire = active === "all" || families.includes(active);
-  const showThirdParty = active === "all" || active === "third-party";
-  const visibleVoltaire =
-    active === "all"
-      ? voltaireModels
-      : voltaireModels.filter((m) => m.family === active);
+  const isFamilyTab = families.includes(active);
+
+  // "All" shows the downloadable third-party models plus any Voltaire model
+  // that is available or in development. Planned models stay in their family
+  // tab until they ship, so the default view stays clean and matches the
+  // home page. Each family tab shows that family's full lineup.
+  const visibleVoltaire = isFamilyTab
+    ? voltaireModels.filter((m) => m.family === active)
+    : active === "all"
+      ? voltaireModels.filter((m) => m.status !== "planned")
+      : [];
+
+  const visibleThirdParty =
+    active === "all" || active === "third-party" ? thirdPartyModels : [];
 
   return (
     <>
@@ -43,59 +51,57 @@ export default function ModelsCatalog() {
       </div>
 
       <div className="models-grid">
-        {showVoltaire &&
-          visibleVoltaire.map((model) => (
-            <AnimatedSection key={model.id} variants={fadeUp}>
-              <div className="model-card">
-                {model.logo ? (
-                  <Image
-                    src={model.logo}
-                    alt={model.name}
-                    width={56}
-                    height={56}
-                    style={{ filter: "brightness(0) invert(1)" }}
-                  />
-                ) : (
-                  <div className="model-card-icon">
-                    <i className={model.icon}></i>
-                  </div>
-                )}
-                <h4>{model.name}</h4>
-                <p>
-                  {model.family} · {model.size}
-                </p>
-                <span className={`status-badge status-${model.status}`}>
-                  {STATUS_LABELS[model.status]}
-                </span>
-              </div>
-            </AnimatedSection>
-          ))}
-
-        {showThirdParty &&
-          thirdPartyModels.map((model) => (
-            <AnimatedSection key={model.id} variants={fadeUp}>
-              <div className="model-card">
+        {visibleVoltaire.map((model) => (
+          <AnimatedSection key={model.id} variants={fadeUp}>
+            <div className="model-card">
+              {model.logo ? (
                 <Image
                   src={model.logo}
-                  alt={model.alt}
+                  alt={model.name}
                   width={56}
                   height={56}
-                  style={model.white ? { filter: "brightness(0) invert(1)" } : undefined}
+                  style={{ filter: "brightness(0) invert(1)" }}
                 />
-                <h4>{model.name}</h4>
-                <p>{model.tagline}</p>
-                <span className="model-card-dev">by {model.developer}</span>
-                <a
-                  className="model-card-link"
-                  href={model.officialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Official page <i className="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
-              </div>
-            </AnimatedSection>
-          ))}
+              ) : (
+                <div className="model-card-icon">
+                  <i className={model.icon}></i>
+                </div>
+              )}
+              <h4>{model.name}</h4>
+              <p>
+                {model.family} · {model.size}
+              </p>
+              <span className={`status-badge status-${model.status}`}>
+                {STATUS_LABELS[model.status]}
+              </span>
+            </div>
+          </AnimatedSection>
+        ))}
+
+        {visibleThirdParty.map((model) => (
+          <AnimatedSection key={model.id} variants={fadeUp}>
+            <div className="model-card">
+              <Image
+                src={model.logo}
+                alt={model.alt}
+                width={56}
+                height={56}
+                style={model.white ? { filter: "brightness(0) invert(1)" } : undefined}
+              />
+              <h4>{model.name}</h4>
+              <p>{model.tagline}</p>
+              <span className="model-card-dev">by {model.developer}</span>
+              <a
+                className="model-card-link"
+                href={model.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Official page <i className="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+          </AnimatedSection>
+        ))}
       </div>
     </>
   );
