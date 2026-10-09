@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import AnimatedSection from "@/components/AnimatedSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollTopButton from "@/components/ScrollTopButton";
-import {
-  STATUS_LABELS,
-  roadmapSteps,
-  thirdPartyModels,
-  voltaireModels,
-} from "@/lib/models";
+import ModelsCatalog from "./ModelsCatalog";
+import { roadmapSteps } from "@/lib/models";
 import { fadeUp } from "@/lib/animations";
 
 export const metadata: Metadata = {
@@ -39,64 +34,17 @@ export default function Models() {
             <h1>Models</h1>
             <p>
               Voltaire runs open-weight language and vision models on your own device.
-              Here you can see the Voltaire 1 family we are building, the third-party
-              models available to download in the app, and what is coming next.
+              Use the switcher to browse the Voltaire 1 family we are building and the
+              third-party models available to download in the app.
             </p>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Voltaire 1 family */}
-      <section className="models-block" id="voltaire-1">
+      {/* Catalogue */}
+      <section className="models-block alt" id="catalogue">
         <div className="container">
-          <AnimatedSection variants={fadeUp}>
-            <div className="section-header">
-              <h2>The Voltaire 1 family.</h2>
-              <p>Our own compact, on-device models. None of these are publicly available yet, but Voltaire 1 Instruct is our first priority.</p>
-            </div>
-          </AnimatedSection>
-
-          <div className="family-grid">
-            {voltaireModels.map((model) => (
-              <AnimatedSection key={model.id} variants={fadeUp}>
-                <div className="family-card">
-                  <div className="family-card-top">
-                    <div className="family-icon">
-                      <i className={model.icon}></i>
-                    </div>
-                    <span className={`status-badge status-${model.status}`}>
-                      {STATUS_LABELS[model.status]}
-                    </span>
-                  </div>
-                  <h3>{model.name}</h3>
-                  <div className="family-sub">
-                    {model.family} · {model.specialization}
-                  </div>
-                  <p>{model.purpose}</p>
-                  <div className="detail-chips">
-                    <span className="detail-chip">
-                      <i className="fa-solid fa-ruler"></i> {model.size}
-                    </span>
-                    {model.runtime && (
-                      <span className="detail-chip">
-                        <i className="fa-solid fa-microchip"></i> {model.runtime}
-                      </span>
-                    )}
-                    {model.formats?.map((format) => (
-                      <span className="detail-chip" key={format}>
-                        <i className="fa-solid fa-cube"></i> {format}
-                      </span>
-                    ))}
-                    {model.version && (
-                      <span className="detail-chip">
-                        <i className="fa-solid fa-tag"></i> {model.version}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+          <ModelsCatalog />
 
           <AnimatedSection variants={fadeUp}>
             <div className="naming-note">
@@ -108,11 +56,23 @@ export default function Models() {
               </p>
             </div>
           </AnimatedSection>
+
+          <AnimatedSection variants={fadeUp}>
+            <div className="info-note">
+              <i className="fa-solid fa-flask"></i>
+              <p>
+                <strong>Experimental and internal builds.</strong> Base checkpoints,
+                unfinished training runs, and private experiments are not listed here.
+                Voltaire 2.5 1.7B remains an experimental build and is not publicly
+                available.
+              </p>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* Roadmap */}
-      <section className="models-block alt" id="roadmap">
+      <section className="models-block" id="roadmap">
         <div className="container">
           <AnimatedSection variants={fadeUp}>
             <div className="section-header">
@@ -132,74 +92,6 @@ export default function Models() {
                 </li>
               ))}
             </ol>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* Third-party models */}
-      <section className="models-block" id="third-party">
-        <div className="container">
-          <AnimatedSection variants={fadeUp}>
-            <div className="section-header">
-              <h2>Third-party models.</h2>
-              <p>Open-weight models from other developers, available to download in the app. Each model is the property of its respective developer.</p>
-            </div>
-          </AnimatedSection>
-
-          <div className="third-party-grid">
-            {thirdPartyModels.map((model) => (
-              <AnimatedSection key={model.id} variants={fadeUp}>
-                <div className="third-party-card">
-                  <div className="tp-logo">
-                    <Image
-                      src={model.logo}
-                      alt={model.alt}
-                      width={44}
-                      height={44}
-                      style={model.white ? { filter: "invert(1)" } : undefined}
-                    />
-                  </div>
-                  <div className="tp-body">
-                    <div className="tp-head">
-                      <h3>{model.name}</h3>
-                      <span className="tp-dev">by {model.developer}</span>
-                    </div>
-                    <p>{model.purpose}</p>
-                    <div className="detail-chips">
-                      <span className="detail-chip">
-                        <i className="fa-solid fa-microchip"></i> {model.runtime}
-                      </span>
-                      <span className="detail-chip">
-                        <i className="fa-solid fa-mobile-screen"></i> {model.platforms.join(", ")}
-                      </span>
-                      <span className="detail-chip success">
-                        <i className="fa-solid fa-check"></i> Supported
-                      </span>
-                    </div>
-                    <a
-                      href={model.officialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="tp-link"
-                    >
-                      Official page <i className="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-
-          <AnimatedSection variants={fadeUp}>
-            <div className="info-note">
-              <i className="fa-solid fa-flask"></i>
-              <p>
-                <strong>Experimental and internal builds.</strong> Base checkpoints,
-                unfinished training runs, and private experiments are not listed here.
-                Voltaire 2.5 1.7B remains an experimental build and is not publicly
-                available.
-              </p>
-            </div>
           </AnimatedSection>
         </div>
       </section>
