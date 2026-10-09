@@ -1200,8 +1200,12 @@ a:hover {
 }
 
 /* Uniform card height on the models page (content stays top-aligned) */
+.models-page .models-grid > * {
+	height: 250px;
+}
+
 .models-page .model-card {
-	min-height: 235px;
+	height: 100%;
 }
 
 .status-badge {
