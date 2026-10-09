@@ -1035,6 +1035,386 @@ a:hover {
 	color: var(--accent);
 }
 
+/* Models Page */
+.models-page {
+	min-height: 100vh;
+}
+
+.page-hero {
+	padding: 160px 0 60px;
+	text-align: center;
+	max-width: 760px;
+	margin: 0 auto;
+}
+
+.page-eyebrow {
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--text-muted);
+	margin-bottom: 16px;
+}
+
+.page-hero h1 {
+	font-size: clamp(40px, 6vw, 64px);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	margin-bottom: 20px;
+}
+
+.page-hero p {
+	font-size: 17px;
+	color: var(--text-muted);
+	line-height: 1.7;
+}
+
+.models-block {
+	padding: 80px 0;
+}
+
+.models-block.alt {
+	background: var(--bg-card);
+}
+
+.models-cta {
+	display: flex;
+	justify-content: center;
+	margin-top: 48px;
+}
+
+.btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 13px 28px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text);
+	background: transparent;
+	transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.btn-secondary:hover {
+	border-color: var(--accent);
+	background: rgba(255, 255, 255, 0.06);
+	color: var(--text);
+	transform: translateY(-2px);
+}
+
+/* Voltaire 1 family */
+.family-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: 1fr;
+	gap: 20px;
+}
+
+.family-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background: var(--bg-card);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 28px;
+	transition: border-color 0.3s, transform 0.3s;
+}
+
+.family-card:hover {
+	border-color: var(--accent);
+	transform: translateY(-4px);
+}
+
+.family-card-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.family-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.family-icon i {
+	font-size: 20px;
+	color: var(--accent);
+}
+
+.family-card h3 {
+	font-size: 18px;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.family-sub {
+	font-size: 13px;
+	color: var(--text-muted);
+	margin-bottom: 12px;
+}
+
+.family-card p {
+	font-size: 14px;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+.detail-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: auto;
+	padding-top: 18px;
+}
+
+.detail-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	padding: 5px 10px;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	color: var(--text-muted);
+	background: var(--bg);
+}
+
+.detail-chip i {
+	font-size: 11px;
+	color: var(--accent);
+}
+
+.detail-chip.success {
+	color: #22c55e;
+	border-color: rgba(34, 197, 94, 0.3);
+}
+
+.detail-chip.success i {
+	color: #22c55e;
+}
+
+.status-badge {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	padding: 4px 10px;
+	border-radius: 6px;
+	white-space: nowrap;
+}
+
+.status-available {
+	background: rgba(34, 197, 94, 0.15);
+	color: #22c55e;
+}
+
+.status-in-development {
+	background: rgba(245, 158, 11, 0.15);
+	color: #f59e0b;
+}
+
+.status-planned {
+	background: rgba(161, 161, 170, 0.15);
+	color: var(--text-muted);
+}
+
+.naming-note,
+.info-note {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+	margin-top: 32px;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 20px 24px;
+}
+
+.models-block.alt .naming-note,
+.models-block.alt .info-note {
+	background: var(--bg-card);
+}
+
+.naming-note i,
+.info-note i {
+	color: var(--accent);
+	font-size: 16px;
+	margin-top: 3px;
+	flex-shrink: 0;
+}
+
+.naming-note p,
+.info-note p {
+	font-size: 14px;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+.naming-note strong,
+.info-note strong {
+	color: var(--text);
+}
+
+.naming-note em {
+	color: var(--accent2);
+	font-style: normal;
+}
+
+/* Roadmap */
+.roadmap-list {
+	display: grid;
+	gap: 16px;
+	max-width: 760px;
+	margin: 0 auto;
+	list-style: none;
+}
+
+.roadmap-step {
+	display: flex;
+	gap: 18px;
+	align-items: flex-start;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 22px 24px;
+	transition: border-color 0.3s;
+}
+
+.roadmap-step:hover {
+	border-color: var(--accent);
+}
+
+.roadmap-number {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: var(--bg-card-hover);
+	border: 1px solid var(--border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 14px;
+	color: var(--accent);
+	flex-shrink: 0;
+}
+
+.roadmap-step h3 {
+	font-size: 16px;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.roadmap-step p {
+	font-size: 14px;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+/* Third-party models */
+.third-party-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
+}
+
+.third-party-card {
+	display: flex;
+	gap: 18px;
+	height: 100%;
+	background: var(--bg-card);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 24px;
+	transition: border-color 0.3s, transform 0.3s;
+}
+
+.third-party-card:hover {
+	border-color: var(--accent);
+	transform: translateY(-4px);
+}
+
+.tp-logo {
+	width: 52px;
+	height: 52px;
+	flex-shrink: 0;
+	border-radius: 12px;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tp-logo img {
+	width: 32px;
+	height: 32px;
+	object-fit: contain;
+}
+
+.tp-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.tp-head {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.tp-head h3 {
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.tp-dev {
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.tp-body > p {
+	font-size: 14px;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+.tp-body .detail-chips {
+	margin-top: 14px;
+	padding-top: 0;
+}
+
+.tp-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 16px;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text);
+}
+
+.tp-link i {
+	font-size: 11px;
+}
+
+.tp-link:hover {
+	color: var(--accent2);
+}
+
 /* Scroll to Top Button */
 .scroll-top-btn {
 	position: fixed;
@@ -1297,5 +1677,40 @@ a:hover {
 
 	.legal-page h1 {
 		font-size: 28px;
+	}
+}
+
+/* Models Page Responsive */
+@media (max-width: 992px) {
+	.family-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.third-party-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	.page-hero {
+		padding: 120px 0 40px;
+	}
+
+	.page-hero p {
+		font-size: 15px;
+	}
+
+	.family-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 480px) {
+	.third-party-card {
+		flex-direction: column;
+	}
+
+	.roadmap-step {
+		padding: 18px;
 	}
 }
