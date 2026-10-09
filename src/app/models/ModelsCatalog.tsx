@@ -3,8 +3,26 @@
 import { useState } from "react";
 import Image from "next/image";
 import AnimatedSection from "@/components/AnimatedSection";
-import { STATUS_LABELS, thirdPartyModels, voltaireModels } from "@/lib/models";
+import {
+  STATUS_LABELS,
+  thirdPartyModels,
+  voltaireFamilies,
+  voltaireModels,
+  type ModelStatus,
+} from "@/lib/models";
 import { fadeUp } from "@/lib/animations";
+
+// A family is only worth showing in "All" once it has something real in it.
+function familyStatus(family: string): ModelStatus {
+  const models = voltaireModels.filter((m) => m.family === family);
+  if (models.some((m) => m.status === "in-development")) return "in-development";
+  if (models.some((m) => m.status === "available")) return "available";
+  return "planned";
+}
+
+function familyLogo(family: string) {
+  return voltaireModels.find((m) => m.family === family)?.logo;
+}
 
 export default function ModelsCatalog() {
   // Every Voltaire family in the data source automatically becomes a tab,
@@ -20,15 +38,17 @@ export default function ModelsCatalog() {
 
   const isFamilyTab = families.includes(active);
 
-  // "All" shows the downloadable third-party models plus any Voltaire model
-  // that is available or in development. Planned models stay in their family
-  // tab until they ship, so the default view stays clean and matches the
-  // home page. Each family tab shows that family's full lineup.
-  const visibleVoltaire = isFamilyTab
-    ? voltaireModels.filter((m) => m.family === active)
-    : active === "all"
-      ? voltaireModels.filter((m) => m.status !== "planned")
+  // "All" shows one clean entry per Voltaire family that has something real
+  // in it, alongside the downloadable third-party models. Sizes, versions and
+  // formats stay in the family tab.
+  const visibleFamilies =
+    active === "all"
+      ? voltaireFamilies.filter((f) => familyStatus(f.name) !== "planned")
       : [];
+
+  const visibleModels = isFamilyTab
+    ? voltaireModels.filter((m) => m.family === active)
+    : [];
 
   const visibleThirdParty =
     active === "all" || active === "third-party" ? thirdPartyModels : [];
@@ -51,7 +71,29 @@ export default function ModelsCatalog() {
       </div>
 
       <div className="models-grid">
-        {visibleVoltaire.map((model) => (
+        {visibleFamilies.map((family) => (
+          <AnimatedSection key={family.name} variants={fadeUp}>
+            <div className="model-card">
+              {familyLogo(family.name) && (
+                <Image
+                  src={familyLogo(family.name)!}
+                  alt={family.name}
+                  width={56}
+                  height={56}
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
+              )}
+              <h4>{family.name}</h4>
+              <p>{family.tagline}</p>
+              <span className="model-card-dev">by Voltaire</span>
+              <span className={`status-badge status-${familyStatus(family.name)}`}>
+                {STATUS_LABELS[familyStatus(family.name)]}
+              </span>
+            </div>
+          </AnimatedSection>
+        ))}
+
+        {visibleModels.map((model) => (
           <AnimatedSection key={model.id} variants={fadeUp}>
             <div className="model-card">
               {model.logo ? (
