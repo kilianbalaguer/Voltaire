@@ -1199,6 +1199,23 @@ a:hover {
 	color: var(--accent2);
 }
 
+/* Uniform card height on the models page */
+.models-page .model-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 250px;
+}
+
+.models-page .model-card .status-badge,
+.models-page .model-card-dev {
+	margin-top: auto;
+}
+
+.models-page .model-card .status-badge {
+	align-self: center;
+}
+
 .status-badge {
 	font-size: 10px;
 	font-weight: 600;
@@ -1259,57 +1276,6 @@ a:hover {
 .naming-note em {
 	color: var(--accent2);
 	font-style: normal;
-}
-
-/* Roadmap */
-.roadmap-list {
-	display: grid;
-	gap: 16px;
-	max-width: 760px;
-	margin: 0 auto;
-	list-style: none;
-}
-
-.roadmap-step {
-	display: flex;
-	gap: 18px;
-	align-items: flex-start;
-	background: var(--bg);
-	border: 1px solid var(--border);
-	border-radius: var(--radius);
-	padding: 22px 24px;
-	transition: border-color 0.3s;
-}
-
-.roadmap-step:hover {
-	border-color: var(--accent);
-}
-
-.roadmap-number {
-	width: 34px;
-	height: 34px;
-	border-radius: 50%;
-	background: var(--bg-card-hover);
-	border: 1px solid var(--border);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: 700;
-	font-size: 14px;
-	color: var(--accent);
-	flex-shrink: 0;
-}
-
-.roadmap-step h3 {
-	font-size: 16px;
-	font-weight: 600;
-	margin-bottom: 4px;
-}
-
-.roadmap-step p {
-	font-size: 14px;
-	color: var(--text-muted);
-	line-height: 1.6;
 }
 
 /* Scroll to Top Button */
@@ -1596,9 +1562,5 @@ a:hover {
 	.pill-btn {
 		padding: 8px 16px;
 		font-size: 13px;
-	}
-
-	.roadmap-step {
-		padding: 18px;
 	}
 }

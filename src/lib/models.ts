@@ -200,22 +200,3 @@ export const thirdPartyModels: ThirdPartyModel[] = [
     white: true,
   },
 ];
-
-export const roadmapSteps = [
-  {
-    title: "Voltaire 1 Instruct",
-    detail: "Our first priority: evaluate, test, and prepare our 1.7B general-purpose assistant for release.",
-  },
-  {
-    title: "Voltaire 1 Mini",
-    detail: "A smaller model for simple tasks and devices with limited memory.",
-  },
-  {
-    title: "Voltaire 1 Thinking",
-    detail: "Reasoning-focused work, once Instruct has shipped.",
-  },
-  {
-    title: "Voltaire 1 Code & Vision",
-    detail: "Specialised coding and image-understanding models.",
-  },
-];
