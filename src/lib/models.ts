@@ -40,7 +40,7 @@ export type VoltaireFamily = {
 export const voltaireFamilies: VoltaireFamily[] = [
   {
     name: "Voltaire 1",
-    tagline: "Our own compact, on-device model family. Instruct is the first model in development.",
+    tagline: "Voltaire's own model family",
   },
 ];
 
