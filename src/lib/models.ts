@@ -30,6 +30,20 @@ export type ThirdPartyModel = {
   white?: boolean;
 };
 
+export type VoltaireFamily = {
+  name: string;
+  tagline: string;
+};
+
+// Family-level summary used in the "All" view. Individual sizes, versions and
+// formats belong to the family tab, not here.
+export const voltaireFamilies: VoltaireFamily[] = [
+  {
+    name: "Voltaire 1",
+    tagline: "Our own compact, on-device model family. Instruct is the first model in development.",
+  },
+];
+
 export const STATUS_LABELS: Record<ModelStatus, string> = {
   available: "Available",
   "in-development": "In development",
