@@ -9,6 +9,7 @@ export type VoltaireModel = {
   purpose: string;
   status: ModelStatus;
   icon: string;
+  logo?: string;
   version?: string;
   runtime?: string;
   formats?: string[];
@@ -47,6 +48,7 @@ export const voltaireModels: VoltaireModel[] = [
       "Our main general-purpose assistant, built for everyday conversation, following instructions, writing, summaries, and clear explanations.",
     status: "in-development",
     icon: "fa-solid fa-comments",
+    logo: "/images/Voltaire_1.png",
     version: "v1.0.0",
     runtime: "MLX",
     formats: ["4-bit MLX"],
@@ -61,6 +63,7 @@ export const voltaireModels: VoltaireModel[] = [
       "A smaller, lightweight model for simple tasks and devices with limited memory, while keeping the same on-device philosophy.",
     status: "planned",
     icon: "fa-solid fa-feather",
+    logo: "/images/Voltaire_1.png",
     runtime: "MLX",
     formats: ["4-bit MLX"],
   },
@@ -74,6 +77,7 @@ export const voltaireModels: VoltaireModel[] = [
       "Intended for multi-step reasoning, maths, and logic. Reasoning abilities are being evaluated and will be demonstrated through testing before release.",
     status: "planned",
     icon: "fa-solid fa-brain",
+    logo: "/images/Voltaire_1.png",
     runtime: "MLX",
     formats: ["4-bit MLX"],
   },
@@ -87,6 +91,7 @@ export const voltaireModels: VoltaireModel[] = [
       "Intended for coding, debugging, code explanations, and programming assistance directly on your device.",
     status: "planned",
     icon: "fa-solid fa-code",
+    logo: "/images/Voltaire_1.png",
     runtime: "MLX",
     formats: ["4-bit MLX"],
   },
@@ -100,6 +105,7 @@ export const voltaireModels: VoltaireModel[] = [
       "Intended for image understanding, screenshots, and visual inputs. Requires a vision-capable model and a compatible runtime.",
     status: "planned",
     icon: "fa-solid fa-eye",
+    logo: "/images/Voltaire_1.png",
     runtime: "MLX",
     formats: ["4-bit MLX"],
   },

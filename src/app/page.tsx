@@ -145,7 +145,7 @@ export default function Home() {
             {thirdPartyModels.map((m, i) => (
               <AnimatedSection key={i} variants={fadeUp}>
                 <div className="model-card">
-                  <Image src={m.logo} alt={m.alt} width={56} height={56} style={m.white ? { filter: "invert(1)" } : undefined} />
+                  <Image src={m.logo} alt={m.alt} width={56} height={56} style={m.white ? { filter: "brightness(0) invert(1)" } : undefined} />
                   <h4>{m.name}</h4>
                   <p>{m.tagline}</p>
                 </div>
