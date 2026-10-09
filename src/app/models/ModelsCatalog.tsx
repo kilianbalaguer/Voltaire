@@ -47,9 +47,19 @@ export default function ModelsCatalog() {
           visibleVoltaire.map((model) => (
             <AnimatedSection key={model.id} variants={fadeUp}>
               <div className="model-card">
-                <div className="model-card-icon">
-                  <i className={model.icon}></i>
-                </div>
+                {model.logo ? (
+                  <Image
+                    src={model.logo}
+                    alt={model.name}
+                    width={56}
+                    height={56}
+                    style={{ filter: "brightness(0) invert(1)" }}
+                  />
+                ) : (
+                  <div className="model-card-icon">
+                    <i className={model.icon}></i>
+                  </div>
+                )}
                 <h4>{model.name}</h4>
                 <p>
                   {model.family} · {model.size}
@@ -70,7 +80,7 @@ export default function ModelsCatalog() {
                   alt={model.alt}
                   width={56}
                   height={56}
-                  style={model.white ? { filter: "invert(1)" } : undefined}
+                  style={model.white ? { filter: "brightness(0) invert(1)" } : undefined}
                 />
                 <h4>{model.name}</h4>
                 <p>{model.tagline}</p>
