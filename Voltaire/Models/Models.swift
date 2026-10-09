@@ -1,8 +1,8 @@
 //
 //  Models.swift
-//  fullmoon
+//  Voltaire
 //
-//  Created by Jordan Singer on 10/4/24.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import MLXLMCommon
@@ -207,6 +207,12 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/MiniCPM5-2B-mlx-4Bit"
     )
     
+    // MARK: - Voltaire
+
+    public static let voltaire_2_5_1_7b_4bit = ModelConfiguration(
+        id: "kilianbalaguer9/Voltaire-2.5-MLX-4bit"
+    )
+
     // MARK: - Available Models
     
     #if os(iOS)
@@ -256,6 +262,8 @@ extension ModelConfiguration: @retroactive Equatable {
         // MiniCPM
         minicpm_1b_4bit,
         minicpm_2b_4bit,
+        // Voltaire
+        voltaire_2_5_1_7b_4bit,
     ]
     #else
     public static var availableModels: [ModelConfiguration] = [
@@ -293,6 +301,8 @@ extension ModelConfiguration: @retroactive Equatable {
         // MiniCPM
         minicpm_1b_4bit,
         minicpm_2b_4bit,
+        // Voltaire
+        voltaire_2_5_1_7b_4bit,
     ]
     #endif
     
@@ -527,6 +537,7 @@ extension ModelConfiguration: @retroactive Equatable {
         case .qwen3_0_6b_4bit: 0.346
         case .minicpm_1b_4bit: 0.608
         case .minicpm_2b_4bit: 1.42
+        case .voltaire_2_5_1_7b_4bit: 0.96
         default: nil
         }
     }
@@ -555,6 +566,7 @@ extension ModelConfiguration: @retroactive Equatable {
         case .llama_3_2_3b_4bit, .llama_3_2_1b_4bit: "LLaMa 3.2"
         case .qwen3_vl_2b_4bit, .qwen3_thinking_4b_4bit, .qwen3_4b_4bit, .qwen3_1_7b_4bit, .qwen3_0_6b_4bit: "Qwen 3"
         case .minicpm_1b_4bit, .minicpm_2b_4bit: "MiniCPM 5"
+        case .voltaire_2_5_1_7b_4bit: "Voltaire 2.5"
         default: self.name.replacing("mlx-community/", with: "").components(separatedBy: "-")[0].capitalized
         }
     }

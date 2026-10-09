@@ -2,7 +2,7 @@
 //  CustomSideMenu.swift
 //  Voltaire
 //
-//  Created by Kilian Balaguer on 4/10/2026.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import SwiftUI

@@ -1,8 +1,8 @@
 //
 //  ConversationView.swift
-//  fullmoon
+//  Voltaire
 //
-//  Created by Xavier on 16/12/2024.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 //import MDLatex

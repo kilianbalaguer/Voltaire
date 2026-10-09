@@ -421,38 +421,40 @@ struct ModelsSettingsView: View {
             }
         }
     }
-    
-    func getDescription(for family: String) -> String {
-        switch family {
-        case "Bonsai": return "A new class of ultra-efficient models from PrismML. Built for performance where it matters most: on-device and in real time."
-        case "Qwen 3.5": return "Qwen 3.5 models from the Qwen team. Supports 201 languages and dialects, with strong reasoning and visual understanding."
-        case "LFM 2.5": return "A new generation of hybrid models developed by Liquid AI. Improved performance compared to LFM 2 and designed for on-device deployment."
-        case "LFM 2": return "A family of hybrid models developed by Liquid AI. Designed for on-device deployment."
-        case "Ministral 3": return "Edge-optimized multimodal models from Mistral AI. Great vision capabilities, support for dozens of languages, and strong adherence to system prompts."
-        case "SmolLM 3": return "Small but powerful model by Hugging Face. Great for complex reasoning, long conversations, and use in English, French, Spanish, German, Italian, and Portuguese."
-        case "Gemma 3n": return "Powerful models from Google. Optimized for use in mobile devices. Best for content creation, text summarization, and conversational AI."
-        case "Gemma 2": return "Lightweight and efficient models from Google. Tailored for English-language tasks and communication."
-        case "Granite 4.0": return "The latest models from IBM. Delivers industry-leading performance in tasks like instruction following. Optimized for edge deployments with remarkable inference efficiency."
-        case "LLaMa 3.2": return "Small models from Meta. Good for multilingual dialogue and summarization tasks."
-        case "Qwen 3": return "Powerful models from the Qwen team, including both text and vision-language models. Supports over 100 languages and excels at creative writing and role-playing."
-        case "MiniCPM 5": return "Lightweight models from OpenBMB. Good for everyday conversations in English and Chinese, coding, and problem-solving."
-        default: return "High performance AI model"
-        }
+}
+
+func getDescription(for family: String) -> String {
+    switch family {
+    case "Bonsai": return "A new class of ultra-efficient models from PrismML. Built for performance where it matters most: on-device and in real time."
+    case "Qwen 3.5": return "Qwen 3.5 models from the Qwen team. Supports 201 languages and dialects, with strong reasoning and visual understanding."
+    case "LFM 2.5": return "A new generation of hybrid models developed by Liquid AI. Improved performance compared to LFM 2 and designed for on-device deployment."
+    case "LFM 2": return "A family of hybrid models developed by Liquid AI. Designed for on-device deployment."
+    case "Ministral 3": return "Edge-optimized multimodal models from Mistral AI. Great vision capabilities, support for dozens of languages, and strong adherence to system prompts."
+    case "SmolLM 3": return "Small but powerful model by Hugging Face. Great for complex reasoning, long conversations, and use in English, French, Spanish, German, Italian, and Portuguese."
+    case "Gemma 3n": return "Powerful models from Google. Optimized for use in mobile devices. Best for content creation, text summarization, and conversational AI."
+    case "Gemma 2": return "Lightweight and efficient models from Google. Tailored for English-language tasks and communication."
+    case "Granite 4.0": return "The latest models from IBM. Delivers industry-leading performance in tasks like instruction following. Optimized for edge deployments with remarkable inference efficiency."
+    case "LLaMa 3.2": return "Small models from Meta. Good for multilingual dialogue and summarization tasks."
+    case "Qwen 3": return "Powerful models from the Qwen team, including both text and vision-language models. Supports over 100 languages and excels at creative writing and role-playing."
+    case "MiniCPM 5": return "Lightweight models from OpenBMB. Good for everyday conversations in English and Chinese, coding, and problem-solving."
+    case "Voltaire 2.5": return "The official Voltaire family, created by Kilian Balaguer. Lightweight AI models built for fast, private, and efficient on-device inference with a focus on helpful conversation, coding, and everyday tasks."
+    default: return "High performance AI model"
     }
-    
-    func getIcon(for family: String) -> String {
-        switch family {
-        case "Bonsai": return "Bonsai"
-        case "Qwen 3", "Qwen 3.5": return "Gwen"
-        case "LFM 2", "LFM 2.5": return "LFM"
-        case "Ministral 3": return "Ministral"
-        case "SmolLM 3": return "SmolLM"
-        case "MiniCPM 5": return "OpenBMB"
-        case "Gemma 2", "Gemma 3n": return "Gemma"
-        case "Granite 4.0": return "Granite"
-        case "LLaMa 3.2", "Llama 3.2": return "LlaMa"
-        default: return "Gemma"
-        }
+}
+
+func getIcon(for family: String) -> String {
+    switch family {
+    case "Bonsai": return "Bonsai"
+    case "Qwen 3", "Qwen 3.5": return "Gwen"
+    case "LFM 2", "LFM 2.5": return "LFM"
+    case "Ministral 3": return "Ministral"
+    case "SmolLM 3": return "SmolLM"
+    case "MiniCPM 5": return "OpenBMB"
+    case "Voltaire 2.5": return "Voltaire"
+    case "Gemma 2", "Gemma 3n": return "Gemma"
+    case "Granite 4.0": return "Granite"
+    case "LLaMa 3.2", "Llama 3.2": return "LlaMa"
+    default: return "Gemma"
     }
 }
 
@@ -621,6 +623,10 @@ func getModelDescription(_ model: ModelConfiguration) -> String {
     } else if model.name.contains("MiniCPM") && model.name.contains("1B") {
         return "A lightweight model from OpenBMB. Good for everyday conversations in English and Chinese, coding help, and answering questions. Recommended for iPhone 15 and newer."
     }
+    // Voltaire
+    else if model.name.contains("Voltaire 2.5") {
+        return "Voltaire 2.5 is a compact 1.7B AI model created by Kilian Balaguer. Tuned for helpful conversation, coding, reasoning, and everyday tasks, with efficient on-device inference. Recommended for iPhone 15 and newer."
+    }
     return "A powerful AI model capable of general purpose language tasks."
 }
 
@@ -674,6 +680,10 @@ func getModelTags(_ model: ModelConfiguration) -> [String] {
         return ["Thinking", "New", "Best"]
     } else if model.name.contains("MiniCPM") {
         return ["Thinking", "New"]
+    }
+    // Voltaire
+    else if model.name.contains("Voltaire") {
+        return ["New", "Best"]
     }
     return []
 }

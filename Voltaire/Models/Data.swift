@@ -1,8 +1,8 @@
 //
 //  Data.swift
-//  fullmoon
+//  Voltaire
 //
-//  Created by Jordan Singer on 10/5/24.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import SwiftUI
@@ -10,7 +10,7 @@ import SwiftData
 import MLXLMCommon
 
 class AppManager: ObservableObject {
-    static let defaultSystemPrompt = "You are a helpful AI assistant in an app called Voltaire. Be clear, concise, and practical. Use Markdown when it improves readability (lists, code blocks, bold). Do not invent facts — if you are unsure, say so. You are not the historical philosopher Voltaire or any other person."
+    static let defaultSystemPrompt = ""
     static let temperatureOptions = ["Default", "Precise - 0.0", "Consistent - 0.2", "Balanced - 0.4", "Creative - 0.6", "Very creative - 0.8", "Experimental - 1.0"]
 
     static func temperatureValue(for option: String) -> Double {
@@ -38,7 +38,7 @@ class AppManager: ObservableObject {
         didSet { objectWillChange.send() }
     }
     @AppStorage("userName") var userName = ""
-    
+
     var hasInstalledModels: Bool { !installedModels.isEmpty }
 
     /// The prompt actually sent to models: custom instructions when enabled, otherwise the default.
@@ -164,6 +164,8 @@ class AppManager: ObservableObject {
             // MiniCPM 5
             "mlx-community/MiniCPM5-1B-4bit": "MiniCPM 5 (1B)",
             "mlx-community/MiniCPM5-2B-mlx-4Bit": "MiniCPM 5 (2B)",
+            // Voltaire
+            "kilianbalaguer9/Voltaire-2.5-MLX-4bit": "Voltaire 2.5 (1.7B)",
         ]
         
         // Try exact match first
@@ -184,7 +186,12 @@ class AppManager: ObservableObject {
     }
     
     func modelParameterCount(_ modelName: String) -> String? {
-        let pattern = #"(\d+\.?\d*)B"#
+        let known: [String: String] = [
+            "kilianbalaguer9/Voltaire-2.5-MLX-4bit": "1.7B",
+        ]
+        if let value = known[modelName] { return value }
+
+        let pattern = #"(\d+\.?\d*)B\b"#
         guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
             return nil
         }

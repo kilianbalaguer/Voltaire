@@ -2,7 +2,7 @@
 //  Alert++.swift
 //  PsychicPaper
 //
-//  Created by Hariz Shirazi on 2023-02-04.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 fileprivate let errorString = NSLocalizedString("Error", comment: "Title to display when displaying an error")
