@@ -1,8 +1,10 @@
+import Link from "next/link";
+
 export default function Terms() {
   return (
     <main className="legal-page">
       <div className="container">
-        <a href="/" className="back-link"><i className="fa-solid fa-arrow-left"></i> Back to home</a>
+        <Link href="/" className="back-link"><i className="fa-solid fa-arrow-left"></i> Back to home</Link>
         <h1>Terms and Conditions</h1>
         <p className="legal-updated">Last updated: July 5, 2026</p>
 

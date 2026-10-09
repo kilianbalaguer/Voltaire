@@ -1,93 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import CountUp from "@/components/CountUp";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ScrollTopButton from "@/components/ScrollTopButton";
+import { thirdPartyModels } from "@/lib/models";
 import { fadeUp, slideLeft, slideRight, staggerContainer } from "@/lib/animations";
 
-const models = [
-  { name: "Llama", description: "Meta's flagship family", logo: "/images/meta-logo.png", alt: "Meta Llama" },
-  { name: "Gemma", description: "Google's lightweight AI", logo: "/images/google-logo.png", alt: "Google Gemma" },
-  { name: "SmolLM", description: "Hugging Face models", logo: "/images/huggingface-logo.png", alt: "Hugging Face SmolLM" },
-  { name: "MiniCPM 5", description: "OpenBMB's reasoning & coding", logo: "/images/OpenBMB.png", alt: "OpenBMB MiniCPM 5" },
-  { name: "Qwen", description: "Alibaba multilingual", logo: "/images/qwen-logo.png", alt: "Qwen" },
-  { name: "Granite", description: "IBM enterprise AI", logo: "/images/ibm-logo.png", alt: "IBM Granite" },
-  { name: "LFM", description: "Liquid Foundation Models", logo: "/images/liquid-logo.png", alt: "Liquid AI LFM", white: true },
-];
-
 const features = [
-  { icon: "fa-solid fa-comments", title: "Text Conversations", description: "Chat with powerful AI models directly on your device. Fast, responsive, and completely offline." },
+  { icon: "fa-solid fa-comments", title: "Text Conversations", description: "Chat with powerful AI models directly on your device. Fast, responsive, and fully on-device." },
   { icon: "fa-solid fa-eye", title: "Vision", description: "Vision-capable models available for download in-app. Analyze images directly on your device." },
   { icon: "fa-solid fa-microphone-lines", title: "Voice Input", description: "Speak your prompts instead of typing. Hands-free interaction that's fast and natural. Coming soon.", comingSoon: true },
   { icon: "fa-solid fa-folder-open", title: "File Support", description: "Drop files into your conversations for AI-powered summaries and analysis." },
-  { icon: "fa-solid fa-shield-halved", title: "100% Private", description: "Zero data collection. Zero cloud processing. Everything stays on your device, always." },
-  { icon: "fa-solid fa-puzzle-piece", title: "40+ Models", description: "Choose from Llama, Gemma, Qwen, MiniCPM 5, and more. Pick the right model for every task." },
+  { icon: "fa-solid fa-shield-halved", title: "100% Private", description: "Your prompts and conversations never leave your device. No cloud processing, no data collection, no tracking." },
+  { icon: "fa-solid fa-puzzle-piece", title: "Model Library", description: "Choose from Llama, Gemma, Qwen, MiniCPM, and more. Pick the right model for every task." },
 ];
 
 const faqs = [
-  { question: "What AI models does Voltaire support?", answer: "Voltaire supports Meta Llama 3.2 & 3.1, Google Gemma 2, 3 & 3n, Qwen 2 VL, 2.5 & 3, MiniCPM 5, and more. All models run completely offline." },
-  { question: "Does it work without internet?", answer: "Yes! Once you download a model, everything runs locally. No internet connection needed for any AI processing." },
-  { question: "Is my data private?", answer: "Absolutely. Your data never leaves your device. No cloud processing, no data collection, no tracking." },
-  { question: "What devices are supported?", answer: "Voltaire is available on iPhone now. iPad and Mac support coming soon." },
-  { question: "How do I get started?", answer: "As soon as Voltaire is released, it will be available on the App Store. Download it, pick one or multiple models to download, and start chatting. No accounts needed at all." },
+  { question: "What AI models does Voltaire support?", answer: "Voltaire supports Meta Llama 3.2 & 3.1, Google Gemma 2, 3 & 3n, Qwen 2 VL, 2.5 & 3, MiniCPM 5, and more. All models run entirely on your device." },
+  { question: "Does it work without internet?", answer: "Yes. Once you download a model, it runs entirely on your device. An internet connection is only needed to download models." },
+  { question: "Is my data private?", answer: "Absolutely. Your prompts and conversations never leave your device. There is no cloud processing, no data collection, and no tracking." },
+  { question: "What devices are supported?", answer: "Voltaire will launch on iPhone 13 and later. iPad and Mac support is planned to follow after launch." },
+  { question: "How do I get started?", answer: "Voltaire is coming soon to the App Store. When it is released, download it, pick one or more models to download, and start chatting. No account is needed." },
   { question: "Can I customize the AI?", answer: "Yes, you can set a custom system prompt to tailor the AI's personality and responses to your preferences." },
 ];
 
 export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 50);
-      setShowScrollTop(window.scrollY > 500);
-    };
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <main>
-      {/* Navbar */}
-      <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
-        <div className="container">
-          <div className="nav-inner">
-            <a href="#" className="nav-brand">
-              <Image src="/images/logo-only-small.png" alt="Voltaire" width={36} height={36} />
-              Voltaire
-            </a>
-            <ul className="nav-links">
-              <li><a href="#features">Features</a></li>
-              <li><a href="#models">Models</a></li>
-              <li><a href="#requirements">Requirements</a></li>
-              <li><a href="#faq">FAQ</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-            <a href="#download" className="nav-cta">Download</a>
-            <button className="nav-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
-              <i className={`fa-solid ${mobileMenuOpen ? "fa-xmark" : "fa-bars"}`}></i>
-            </button>
-          </div>
-        </div>
-      </nav>
-      {mobileMenuOpen && (
-        <div className="mobile-menu">
-          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
-          <a href="#models" onClick={() => setMobileMenuOpen(false)}>Models</a>
-          <a href="#requirements" onClick={() => setMobileMenuOpen(false)}>Requirements</a>
-          <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-          <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-          <a href="#download" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>Download</a>
-        </div>
-      )}
+      <Navbar />
 
       {/* Hero */}
       <section className="hero">
@@ -103,7 +48,7 @@ export default function Home() {
               <span className="gradient">on your device.</span>
             </h1>
             <p>
-              Run powerful language and vision models directly on your iPhone, iPad, and Mac. No cloud. No login. Complete privacy.
+              Bring powerful language and vision models to your iPhone, iPad, and Mac. No cloud. No login. Complete privacy. Coming soon to the App Store.
             </p>
             <a href="#download" className="hero-cta">
               Get Voltaire
@@ -162,19 +107,19 @@ export default function Home() {
             <div className="stats-grid">
               <div className="stat">
                 <h3><CountUp target={100} suffix="%" /></h3>
-                <p>Offline</p>
+                <p>On-device</p>
               </div>
               <div className="stat">
                 <h3><CountUp target={0} /></h3>
                 <p>Data collected</p>
               </div>
               <div className="stat">
-                <h3><CountUp target={40} suffix="+" /></h3>
-                <p>Models available</p>
+                <h3><CountUp target={0} /></h3>
+                <p>Accounts required</p>
               </div>
               <div className="stat">
-                <h3><CountUp target={3} /></h3>
-                <p>Platforms</p>
+                <h3><CountUp target={thirdPartyModels.length} /></h3>
+                <p>Model families</p>
               </div>
             </div>
           </AnimatedSection>
@@ -187,7 +132,7 @@ export default function Home() {
           <AnimatedSection variants={fadeUp}>
             <div className="section-header">
               <h2>Industry-leading models.</h2>
-              <p>Choose from the most popular open-source AI models, all optimized for Apple Silicon.</p>
+              <p>Choose from the most popular open-source AI models, all optimized for Apple Silicon, plus the upcoming Voltaire 1 family.</p>
             </div>
           </AnimatedSection>
           <motion.div
@@ -197,16 +142,23 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
           >
-            {models.map((m, i) => (
+            {thirdPartyModels.map((m, i) => (
               <AnimatedSection key={i} variants={fadeUp}>
                 <div className="model-card">
-                  <Image src={m.logo} alt={m.alt} width={56} height={56} style={"white" in m && m.white ? { filter: "invert(1)" } : undefined} />
+                  <Image src={m.logo} alt={m.alt} width={56} height={56} style={m.white ? { filter: "invert(1)" } : undefined} />
                   <h4>{m.name}</h4>
-                  <p>{m.description}</p>
+                  <p>{m.tagline}</p>
                 </div>
               </AnimatedSection>
             ))}
           </motion.div>
+          <AnimatedSection variants={fadeUp}>
+            <div className="models-cta">
+              <Link href="/models" className="btn-secondary">
+                Explore all models <i className="fa-solid fa-arrow-right"></i>
+              </Link>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -231,7 +183,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Apple Silicon MLX - KEPT */}
+      {/* Apple Silicon MLX */}
       <section className="apple-silicon">
         <div className="container">
           <div className="apple-silicon-inner">
@@ -250,7 +202,7 @@ export default function Home() {
                   From loading models to answering questions, Voltaire delivers remarkable performance while using less power. The result is a seamless experience that feels effortless, whether you are creating, learning, or exploring.
                 </p>
                 <p>
-                  And with MLX designed to run across every Apple device, Voltaire is always at its best on iPhone, iPad, or Mac.
+                  On Mac, Voltaire is built for Apple Silicon (M-series) models. Intel-based Macs are not supported. On iPhone and iPad, Voltaire runs on the devices listed in the system requirements below.
                 </p>
                 <a href="https://mlx-framework.org" target="_blank" rel="noopener noreferrer">
                   Learn more about MLX <i className="fa-solid fa-arrow-right" style={{ fontSize: 12, marginLeft: 4 }}></i>
@@ -267,7 +219,7 @@ export default function Home() {
           <AnimatedSection variants={fadeUp}>
             <div className="section-header">
               <h2>System requirements.</h2>
-              <p>Check if your device is compatible with Voltaire.</p>
+              <p>Voltaire is coming soon to the App Store. iPhone 13 and later will be supported at launch, with iPad and Mac to follow.</p>
             </div>
           </AnimatedSection>
           <AnimatedSection variants={fadeUp}>
@@ -277,6 +229,7 @@ export default function Home() {
                 <div className="device-group-header">
                   <i className="fa-solid fa-mobile-screen"></i>
                   <h3>iPhone</h3>
+                  <span className="coming-soon-badge">Launch platform</span>
                 </div>
                 <div className="devices-columns">
                   <div className="devices-column">
@@ -333,7 +286,7 @@ export default function Home() {
                 <div className="device-group-header">
                   <i className="fa-solid fa-tablet-screen-button"></i>
                   <h3>iPad</h3>
-                  <span className="coming-soon-badge">Coming Soon</span>
+                  <span className="coming-soon-badge">Coming later</span>
                 </div>
                 <div className="devices-columns">
                   <div className="devices-column">
@@ -366,7 +319,7 @@ export default function Home() {
                 <div className="device-group-header">
                   <i className="fa-solid fa-laptop"></i>
                   <h3>Mac</h3>
-                  <span className="coming-soon-badge">Coming Soon</span>
+                  <span className="coming-soon-badge">Coming later</span>
                 </div>
                 <div className="devices-columns">
                   <div className="devices-column">
@@ -522,34 +475,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-inner">
-            <div className="footer-brand">
-              <Image src="/images/logo-only-small.png" alt="Voltaire" width={28} height={28} />
-              Voltaire
-            </div>
-            <div className="footer-links">
-              <a href="/privacy">Privacy</a>
-              <a href="/terms">Terms</a>
-              <a href="#contact">Contact</a>
-            </div>
-          </div>
-          <div className="footer-copy">
-            &copy; 2026 Kilian Balaguer. All rights reserved.
-          </div>
-        </div>
-      </footer>
-
-      {/* Scroll to Top Button */}
-      <button
-        className={`scroll-top-btn ${showScrollTop ? "visible" : ""}`}
-        onClick={scrollToTop}
-        aria-label="Scroll to top"
-      >
-        <i className="fa-solid fa-arrow-up"></i>
-      </button>
+      <Footer />
+      <ScrollTopButton />
     </main>
   );
 }
