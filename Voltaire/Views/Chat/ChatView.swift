@@ -1,8 +1,8 @@
 //
 //  ChatView.swift
-//  fullmoon
+//  Voltaire
 //
-//  Created by Jordan Singer on 12/3/24.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import SwiftUI
@@ -686,7 +686,7 @@ struct ChatView: View {
                         if ModelConfiguration.getModelByName(modelName)?.modelType == .reasoning {
                             sys += " Keep your internal reasoning concise and do not overthink: answer directly."
                         }
-                        
+
                         let output = await llm.generate(
                             modelName: modelName,
                             thread: currentThread,

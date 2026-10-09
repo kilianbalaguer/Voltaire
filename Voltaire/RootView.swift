@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  fullmoon
+//  Voltaire
 //
-//  Created by Jordan Singer on 10/4/24.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import SwiftData

@@ -1,8 +1,8 @@
 //
 //  OnboardingInstallModelView.swift
-//  fullmoon
+//  Voltaire
 //
-//  Created by Jordan Singer on 10/4/24.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import MLXLMCommon
@@ -17,8 +17,19 @@ struct OnboardingInstallModelView: View {
     var onInstall: () -> Void
     let suggestedModel = ModelConfiguration.defaultModel
 
-    func sizeBadge(_ model: ModelConfiguration?) -> String? {
-        model?.formattedSize
+    private struct FamilyGroup: Identifiable {
+        let name: String
+        let models: [ModelConfiguration]
+        var id: String { name }
+        var icon: String { getIcon(for: name) }
+    }
+
+    private var modelFamilies: [FamilyGroup] {
+        Dictionary(grouping: filteredModels, by: { $0.familyName })
+            .map { name, models in
+                FamilyGroup(name: name, models: models.sorted { $0.name < $1.name })
+            }
+            .sorted { $0.name < $1.name }
     }
 
     var modelsList: some View {
@@ -30,7 +41,7 @@ struct OnboardingInstallModelView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 64, height: 64)
                         .foregroundStyle(.primary, .tertiary)
-                    
+
                     VStack(spacing: 4) {
                         Text("Install a model")
                             .font(.title)
@@ -44,57 +55,44 @@ struct OnboardingInstallModelView: View {
                 .frame(maxWidth: .infinity)
             }
             .listRowBackground(Color.clear)
-            
+
             if appManager.installedModels.count > 0 {
                 Section(header: Text("Installed")) {
                     ForEach(appManager.installedModels, id: \.self) { modelName in
-                        let model = ModelConfiguration.getModelByName(modelName)
-                        Button(action: {}) {
+                        if let model = ModelConfiguration.getModelByName(modelName) {
+                            modelRow(model, isInstalledRow: true)
+                        } else {
                             HStack {
                                 Text(appManager.modelDisplayName(modelName))
                                 Spacer()
                                 Image(systemName: "checkmark")
                             }
+                            .foregroundStyle(.secondary)
                         }
-                        .foregroundStyle(.secondary)
-                        .disabled(true)
                     }
                 }
             } else {
                 Section(header: Text("Suggested")) {
-                    Button { selectedModel = suggestedModel } label: {
-                        HStack {
-                            Text(appManager.modelDisplayName(suggestedModel.name))
-                                .tint(.primary)
-                                Spacer()
-                                Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
-                                    .renderingMode(.template)
-                                    .foregroundStyle(.primary)
-                        }
-                    }
+                    modelRow(suggestedModel)
                 }
             }
-            
-            if filteredModels.count > 0 {
-                Section(header: Text("Other Models")) {
-                    ForEach(filteredModels, id: \.name) { model in
-                        Button { selectedModel = model } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(appManager.modelDisplayName(model.name))
-                                        .tint(.primary)
-                                    if let sizeText = model.formattedSize {
-                                        Text(sizeText)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                                Spacer()
-                                Image(systemName: selectedModel.name == model.name ? "checkmark.circle.fill" : "circle")
-                                    .renderingMode(.template)
-                                    .foregroundStyle(.primary)
-                            }
-                        }
+
+            ForEach(modelFamilies) { family in
+                Section {
+                    ForEach(family.models, id: \.name) { model in
+                        modelRow(model)
+                    }
+                } header: {
+                    HStack(spacing: 6) {
+                        Image(family.icon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
+                            .modifier(ConditionalAdaptiveLogo(icon: family.icon))
+                        Text(family.name)
+                        Spacer()
+                        Text(family.models.count > 1 ? "\(family.models.count) models" : "1 model")
+                            .fontWeight(.regular)
                     }
                 }
             }
@@ -122,7 +120,7 @@ struct OnboardingInstallModelView: View {
             checkMetal3Support()
         }
     }
-    
+
     var installButton: some View {
         Button(action: onInstall) {
             Text("Install")
@@ -136,6 +134,85 @@ struct OnboardingInstallModelView: View {
         .tint(.primary)
         .padding(.horizontal)
         .disabled(filteredModels.isEmpty)
+    }
+
+    @ViewBuilder
+    private func modelRow(_ model: ModelConfiguration, isInstalledRow: Bool = false) -> some View {
+        let isInstalled = isInstalledRow || appManager.installedModels.contains(model.name)
+        let isSelected = !isInstalled && selectedModel.name == model.name
+        let icon = getIcon(for: model.familyName)
+        let tags = getModelTags(model)
+
+        Button {
+            if !isInstalled {
+                if appManager.shouldPlayHaptics {
+                    Haptic.shared.play(.light)
+                }
+                selectedModel = model
+            }
+        } label: {
+            HStack(alignment: .top, spacing: 12) {
+                Image(icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .modifier(ConditionalAdaptiveLogo(icon: icon))
+                    .frame(width: 44, height: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemGray6))
+                    )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(appManager.modelDisplayName(model.name))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(isInstalled ? .secondary : .primary)
+                        .multilineTextAlignment(.leading)
+
+                    Text(getModelDescription(model))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                        .truncationMode(.tail)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    HStack(spacing: 6) {
+                        if let sizeText = model.formattedSize {
+                            Text(sizeText)
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Capsule().fill(Color(.systemGray6)))
+                                .foregroundStyle(.secondary)
+                        }
+                        ForEach(tags.prefix(2), id: \.self) { tag in
+                            TagBadge(tag: tag)
+                        }
+                    }
+                    .padding(.top, 2)
+                }
+
+                Spacer(minLength: 8)
+
+                if isInstalled {
+                    Image(systemName: "checkmark")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 4)
+                } else {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.title3)
+                        .foregroundStyle(isSelected ? Color.primary : Color(.systemGray3))
+                        .padding(.top, 2)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(isInstalled)
     }
 
     var filteredModels: [ModelConfiguration] {

@@ -2,7 +2,7 @@
 //  OnboardingNameView.swift
 //  Voltaire
 //
-//  Created by Kilian Balaguer on 10/4/24.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  SafeIndex.swift
 //  Picasso
 //
-//  Created by Hariz Shirazi on 2023-09-04.
+//  Created by Kilian Balaguer on 10/7/26.
 //
 
 import Foundation

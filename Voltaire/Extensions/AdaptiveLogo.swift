@@ -6,7 +6,7 @@
 import SwiftUI
 
 extension View {
-    /// Asset logos drawn for light mode — brighten/desaturate in dark mode
+    /// Asset logos drawn for light mode — pure black in light mode, pure white in dark mode
     func adaptiveLogo() -> some View {
         modifier(AdaptiveLogoModifier())
     }
@@ -17,8 +17,8 @@ private struct AdaptiveLogoModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .brightness(colorScheme == .dark ? 0.7 : 0)
-            .saturation(colorScheme == .dark ? 0.35 : 1)
+            .saturation(0)
+            .brightness(colorScheme == .dark ? 1 : -1)
     }
 }
 
@@ -27,12 +27,12 @@ struct ConditionalAdaptiveLogo: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
     private var shouldAdapt: Bool {
-        icon == "LFM" || icon == "Bonsai"
+        icon == "LFM" || icon == "Bonsai" || icon == "Voltaire"
     }
 
     func body(content: Content) -> some View {
         content
-            .brightness(shouldAdapt && colorScheme == .dark ? 0.7 : 0)
-            .saturation(shouldAdapt && colorScheme == .dark ? 0.35 : 1)
+            .saturation(shouldAdapt && colorScheme == .dark ? 0 : 1)
+            .brightness(shouldAdapt && colorScheme == .dark ? 1 : 0)
     }
 }
