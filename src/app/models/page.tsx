@@ -4,13 +4,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import ModelsCatalog from "./ModelsCatalog";
-import { roadmapSteps } from "@/lib/models";
 import { fadeUp } from "@/lib/animations";
 
 export const metadata: Metadata = {
   title: "Models - Voltaire 1 & Third-Party On-Device AI",
   description:
-    "Explore the Voltaire 1 model family and the open-weight models available in Voltaire. See what is in development, what is available, and the roadmap ahead.",
+    "Explore the Voltaire 1 model family and the open-weight models available in Voltaire. See what is in development and what you can download today.",
   alternates: { canonical: "/models" },
   openGraph: {
     title: "Models - Voltaire 1 & Third-Party On-Device AI",
@@ -67,31 +66,6 @@ export default function Models() {
                 available.
               </p>
             </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* Roadmap */}
-      <section className="models-block" id="roadmap">
-        <div className="container">
-          <AnimatedSection variants={fadeUp}>
-            <div className="section-header">
-              <h2>Roadmap.</h2>
-              <p>How we plan to grow the Voltaire 1 family, in order.</p>
-            </div>
-          </AnimatedSection>
-          <AnimatedSection variants={fadeUp}>
-            <ol className="roadmap-list">
-              {roadmapSteps.map((step, i) => (
-                <li className="roadmap-step" key={step.title}>
-                  <span className="roadmap-number">{i + 1}</span>
-                  <div>
-                    <h3>{step.title}</h3>
-                    <p>{step.detail}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
           </AnimatedSection>
         </div>
       </section>
