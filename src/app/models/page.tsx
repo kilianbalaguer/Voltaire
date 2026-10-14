@@ -40,7 +40,7 @@ export default function Models() {
         </div>
       </section>
 
-      <section id="catalogue">
+      <section id="catalogue" className="catalog-section">
         <div className="container">
           <ModelsCatalog />
 

@@ -1406,13 +1406,29 @@ button {
 .page-hero {
 	position: relative;
 	overflow: hidden;
-	padding: 170px 0 80px;
+	padding: 170px 0 120px;
 	background: linear-gradient(180deg, #e3f2f2 0%, var(--bg) 100%);
 }
 
 .page-hero .container {
 	position: relative;
 	z-index: 1;
+}
+
+/* Fade the aurora out so the hero melts into the page instead of ending on a hard edge */
+.page-hero::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 160px;
+	background: linear-gradient(180deg, rgba(244, 248, 248, 0), var(--bg));
+	pointer-events: none;
+}
+
+.catalog-section {
+	padding-top: 40px;
 }
 
 .page-hero h1 {
