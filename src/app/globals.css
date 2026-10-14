@@ -811,18 +811,18 @@ button {
 .showcase-visual {
 	position: relative;
 	border-radius: var(--radius-lg);
-	padding: 56px 0 0;
-	min-height: 560px;
+	/* Show the whole iPhone with even breathing room on every side */
+	padding: 56px 32px;
 	overflow: hidden;
 	background: linear-gradient(160deg, #d7efec 0%, #cfe5f3 100%);
 	display: flex;
 	justify-content: center;
-	align-items: flex-start;
+	align-items: center;
 }
 
 .showcase-visual img {
-	width: 72%;
-	max-width: 340px;
+	width: 100%;
+	max-width: 290px;
 	filter: drop-shadow(0 30px 50px rgba(14, 76, 82, 0.3));
 }
 
@@ -1792,7 +1792,11 @@ button {
 	}
 
 	.showcase-visual {
-		min-height: 440px;
+		padding: 40px 24px;
+	}
+
+	.showcase-visual img {
+		max-width: 220px;
 	}
 
 	.req-card,
