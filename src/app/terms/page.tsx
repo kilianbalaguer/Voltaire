@@ -1,7 +1,11 @@
 import Link from "next/link";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function Terms() {
   return (
+    <>
+    <Navbar />
     <main className="legal-page">
       <div className="container">
         <Link href="/" className="back-link"><i className="fa-solid fa-arrow-left"></i> Back to home</Link>
@@ -71,5 +75,7 @@ export default function Terms() {
         </div>
       </div>
     </main>
+    <Footer />
+    </>
   );
 }

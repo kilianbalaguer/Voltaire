@@ -20,6 +20,12 @@ function familyStatus(family: string): ModelStatus {
   return "planned";
 }
 
+function badgeClass(status: ModelStatus) {
+  if (status === "available") return "badge-ok";
+  if (status === "in-development") return "badge-soon";
+  return "badge-muted";
+}
+
 function familyLogo(family: string) {
   return voltaireModels.find((m) => m.family === family)?.logo;
 }
@@ -55,14 +61,13 @@ export default function ModelsCatalog() {
 
   return (
     <>
-      <div className="pill-switcher" role="tablist" aria-label="Model categories">
+      <div className="segmented" role="tablist" aria-label="Model categories">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             role="tab"
             aria-selected={active === tab.id}
-            className={`pill-btn ${active === tab.id ? "active" : ""}`}
             onClick={() => setActive(tab.id)}
           >
             {tab.label}
@@ -70,52 +75,50 @@ export default function ModelsCatalog() {
         ))}
       </div>
 
-      <div className="models-grid">
-        {visibleFamilies.map((family) => (
-          <AnimatedSection key={family.name} variants={fadeUp}>
-            <div className="model-card">
-              {familyLogo(family.name) && (
-                <Image
-                  src={familyLogo(family.name)!}
-                  alt={family.name}
-                  width={56}
-                  height={56}
-                  style={{ filter: "brightness(0) invert(1)" }}
-                />
-              )}
-              <h4>{family.name}</h4>
-              <p>{family.tagline}</p>
-              <span className="model-card-dev">by Voltaire</span>
-              <span className={`status-badge status-${familyStatus(family.name)}`}>
-                {STATUS_LABELS[familyStatus(family.name)]}
-              </span>
-            </div>
-          </AnimatedSection>
-        ))}
+      <div className="catalog-grid">
+        {visibleFamilies.map((family) => {
+          const status = familyStatus(family.name);
+          const logo = familyLogo(family.name);
+          return (
+            <AnimatedSection key={family.name} variants={fadeUp}>
+              <div className="model-card voltaire">
+                <div className="model-card-top">
+                  <div className="model-card-logo">
+                    {logo && (
+                      <Image src={logo} alt="" width={28} height={28} style={{ filter: "brightness(0) invert(1)" }} />
+                    )}
+                  </div>
+                  <span className={`badge ${badgeClass(status)}`}>{STATUS_LABELS[status]}</span>
+                </div>
+                <h3>{family.name}</h3>
+                <p>{family.tagline}</p>
+                <div className="model-card-meta">
+                  <span>by Voltaire</span>
+                </div>
+              </div>
+            </AnimatedSection>
+          );
+        })}
 
         {visibleModels.map((model) => (
           <AnimatedSection key={model.id} variants={fadeUp}>
-            <div className="model-card">
-              {model.logo ? (
-                <Image
-                  src={model.logo}
-                  alt={model.name}
-                  width={56}
-                  height={56}
-                  style={{ filter: "brightness(0) invert(1)" }}
-                />
-              ) : (
-                <div className="model-card-icon">
-                  <i className={model.icon}></i>
+            <div className="model-card voltaire">
+              <div className="model-card-top">
+                <div className="model-card-logo">
+                  {model.logo ? (
+                    <Image src={model.logo} alt="" width={28} height={28} style={{ filter: "brightness(0) invert(1)" }} />
+                  ) : (
+                    <i className={model.icon}></i>
+                  )}
                 </div>
-              )}
-              <h4>{model.name}</h4>
-              <p>
-                {model.family} · {model.size}
-              </p>
-              <span className={`status-badge status-${model.status}`}>
-                {STATUS_LABELS[model.status]}
-              </span>
+                <span className={`badge ${badgeClass(model.status)}`}>{STATUS_LABELS[model.status]}</span>
+              </div>
+              <h3>{model.name}</h3>
+              <p>{model.purpose}</p>
+              <div className="model-card-meta">
+                <span>{model.size}</span>
+                {model.runtime && <span>{model.runtime}</span>}
+              </div>
             </div>
           </AnimatedSection>
         ))}
@@ -123,24 +126,26 @@ export default function ModelsCatalog() {
         {visibleThirdParty.map((model) => (
           <AnimatedSection key={model.id} variants={fadeUp}>
             <div className="model-card">
-              <Image
-                src={model.logo}
-                alt={model.alt}
-                width={56}
-                height={56}
-                style={model.white ? { filter: "brightness(0) invert(1)" } : undefined}
-              />
-              <h4>{model.name}</h4>
-              <p>{model.tagline}</p>
-              <span className="model-card-dev">by {model.developer}</span>
-              <a
-                className="model-card-link"
-                href={model.officialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Official page <i className="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
+              <div className="model-card-top">
+                <div className="model-card-logo">
+                  <Image
+                    src={model.logo}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className={model.white ? "on-light-invert" : undefined}
+                  />
+                </div>
+                <span className="badge badge-muted mono">{model.runtime}</span>
+              </div>
+              <h3>{model.name}</h3>
+              <p>{model.purpose}</p>
+              <div className="model-card-meta">
+                <span>by {model.developer}</span>
+                <a href={model.officialUrl} target="_blank" rel="noopener noreferrer">
+                  Official page <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+              </div>
             </div>
           </AnimatedSection>
         ))}

@@ -14,55 +14,53 @@ const navItems = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <>
-      <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
-        <div className="container">
-          <div className="nav-inner">
-            <Link href="/" className="nav-brand">
-              <Image src="/images/logo-only-small.png" alt="Voltaire" width={36} height={36} />
-              Voltaire
-            </Link>
-            <ul className="nav-links">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href}>{item.label}</Link>
-                </li>
-              ))}
-            </ul>
-            <Link href="/#download" className="nav-cta">Download</Link>
-            <button
-              className="nav-hamburger"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              <i className={`fa-solid ${mobileMenuOpen ? "fa-xmark" : "fa-bars"}`}></i>
-            </button>
-          </div>
-        </div>
-      </nav>
-      {mobileMenuOpen && (
-        <div className="mobile-menu">
+    <nav className={`nav ${scrolled ? "scrolled" : ""} ${open ? "open" : ""}`}>
+      <div className="nav-bar">
+        <Link href="/" className="nav-brand" onClick={() => setOpen(false)}>
+          <Image src="/images/logo-only-small.png" alt="" width={26} height={26} />
+          Voltaire
+        </Link>
+        <ul className="nav-links">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+            <li key={item.href}>
+              <Link href={item.href}>{item.label}</Link>
+            </li>
+          ))}
+        </ul>
+        <Link href="/#download" className="btn btn-dark nav-cta">
+          Get Voltaire
+        </Link>
+        <button
+          className="nav-toggle"
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+        >
+          <i className={`fa-solid ${open ? "fa-xmark" : "fa-bars-staggered"}`}></i>
+        </button>
+      </div>
+      {open && (
+        <div className="nav-menu">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
               {item.label}
             </Link>
           ))}
-          <Link href="/#download" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>
-            Download
+          <Link href="/#download" className="btn btn-dark" onClick={() => setOpen(false)}>
+            Get Voltaire
           </Link>
         </div>
       )}
-    </>
+    </nav>
   );
 }
